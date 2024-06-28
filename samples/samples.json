@@ -23,7 +23,7 @@
             },
             {
                 "type": "sub-category",
-                "label": "Fun and Games",
+                "label": "Көңілді және Ойындар",
                 "children": [
                     {
                         "type": "menu-item",
@@ -59,7 +59,7 @@
             },
             {
                 "type": "sub-category",
-                "label": "Visualizations",
+                "label": "Көрнекіліктер",
                 "children": [
                     {
                         "type": "menu-item",
@@ -103,45 +103,45 @@
     },
     {
         "type": "category",
-        "label": "Learn",
+        "label": "Үйрену",
         "children": [
             {
                 "type": "sub-category",
-                "label": "Tour of F#",
+                "label": "F# туры",
                 "children": [
                     {
                         "type": "menu-item",
-                        "label": "Functions",
+                        "label": "Функциялар",
                         "fsharpCode": "tour/functions.fs"
                     },
                     {
                         "type": "menu-item",
-                        "label": "Primitive Types",
+                        "label": "Қарапайым түрлері",
                         "fsharpCode": "tour/primitives.fs"
                     },
                     {
                         "type": "menu-item",
-                        "label": "Collections",
+                        "label": "Жинақтар",
                         "fsharpCode": "tour/collections.fs"
                     },
                     {
                         "type": "menu-item",
-                        "label": "Tuples and Records",
+                        "label": "Кортеждер және жазбалар",
                         "fsharpCode": "tour/records.fs"
                     },
                     {
                         "type": "menu-item",
-                        "label": "Union Types",
+                        "label": "Одақ түрлері",
                         "fsharpCode": "tour/unions.fs"
                     },
                     {
                         "type": "menu-item",
-                        "label": "Units of Measure",
+                        "label": "Өлшем бірліктері",
                         "fsharpCode": "tour/units.fs"
                     },
                     {
                         "type": "menu-item",
-                        "label": "Defining Classes",
+                        "label": "Сыныптарды анықтау",
                         "fsharpCode": "tour/classes.fs"
                     }
                 ]
