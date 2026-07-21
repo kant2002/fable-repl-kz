@@ -1,146 +1,146 @@
-module Elmish.Memory
+модуль Elmish.Memory
 
 (**
  Classic Memory game, by Zaid Ajaj.
  You can find more info about Emish architecture and samples at https://elmish.github.io/
 *)
 
-open Fable.React
-open Fable.React.Props
-open Browser
-open Elmish
-open Elmish.React
+ашық Fable.React
+ашық Fable.React.Props
+ашық Browser
+ашық Elmish
+ашық Elmish.React
 
 // Types
-type Card = {
+түрі Card = {
     Id : int
     ImgUrl : string
     Selected : bool
     MatchFound : bool
 }
 
-type Model = {
+түрі Model = {
     Cards : Card list
     FirstSelection : int option
     SecondSelection : int option
 }
 
-type Actions =
-    | SelectCard of int
+түрі Actions =
+    | SelectCard бастап int
     | StartNewGame
     | NoOp
 
 // State
-let random = new System.Random()
+болсын random = жаңа System.Random()
 
-let origin =
-    // Sample is running in an iframe, so get the location of parent
-    let topLocation = window.top.location
+болсын origin =
+    // Sample is running ішінде an iframe, so get the location бастап parent
+    болсын topLocation = window.top.location
     topLocation.origin + topLocation.pathname
 
-let getCards() =
-    let images = [ "violin"; "electric-guitar"; "headphones"; "piano"; "saxophone";  "trumpet";"turntable";"bass-guitar" ]
+болсын getCards() =
+    болсын images = [ "violin"; "electric-guitar"; "headphones"; "piano"; "saxophone";  "trumpet";"turntable";"bass-guitar" ]
     images
     |> List.append images
-    |> List.sortBy (fun img -> random.Next())
+    |> List.sortBy (функ img -> random.Next())
     |> List.map (sprintf "%simg/memory/%s.png" origin)
-    |> List.mapi (fun index img -> { Id = index; ImgUrl = img; Selected = false; MatchFound = false})
+    |> List.mapi (функ index img -> { Id = index; ImgUrl = img; Selected = false; MatchFound = false})
 
-let initialModel() = {
+болсын initialModel() = {
     Cards = getCards()
     FirstSelection = None
     SecondSelection = None
 }
 
-let cardsEqual id1 id2 (cards: Card list) =
-    let card1 = cards |> List.find (fun c -> c.Id = id1)
-    let card2 = cards |> List.find (fun c -> c.Id = id2)
+болсын cardsEqual id1 id2 (cards: Card list) =
+    болсын card1 = cards |> List.find (функ c -> c.Id = id1)
+    болсын card2 = cards |> List.find (функ c -> c.Id = id2)
     card1.ImgUrl = card2.ImgUrl
 
-let cardSelected id (cards: Card list) =
-    let card = List.find (fun c -> c.Id = id) cards
+болсын cardSelected id (cards: Card list) =
+    болсын card = List.find (функ c -> c.Id = id) cards
     card.Selected
 
-let gameCleared (model: Model) =
-    List.forall (fun card -> card.MatchFound) model.Cards
+болсын gameCleared (model: Model) =
+    List.forall (функ card -> card.MatchFound) model.Cards
 
-let update action model  =
-    match action with
+болсын update action model  =
+    сәйкестік action с
     | StartNewGame -> initialModel()
     | SelectCard index ->
-        match model.FirstSelection, model.SecondSelection with
+        сәйкестік model.FirstSelection, model.SecondSelection с
         | None, None ->
-            let cards =
+            болсын cards =
                 model.Cards
-                |> List.map (fun card ->
-                    if card.Id = index
-                    then { card with Selected = true }
-                    else card)
-            { model with Cards = cards; FirstSelection = Some index }
+                |> List.map (функ card ->
+                    егер card.Id = index
+                    содан { card с Selected = true }
+                    басқа card)
+            { model с Cards = cards; FirstSelection = Some index }
         | Some id, None when id = index -> model
         | Some id, None when cardsEqual id index (model.Cards) ->
-            let cards =
+            болсын cards =
                 model.Cards
-                |> List.map (fun card ->
-                    if card.Id = index || card.Id = id
-                    then { card with Selected = true; MatchFound = true }
-                    else card)
-            { model with Cards = cards; FirstSelection = None; SecondSelection = None }
+                |> List.map (функ card ->
+                    егер card.Id = index || card.Id = id
+                    содан { card с Selected = true; MatchFound = true }
+                    басқа card)
+            { model с Cards = cards; FirstSelection = None; SecondSelection = None }
         | Some id, None when id <> index ->
-            let cards =
+            болсын cards =
                 model.Cards
-                |> List.map (fun card ->
-                    if card.Id = index
-                    then { card with Selected = true }
-                    else card)
+                |> List.map (функ card ->
+                    егер card.Id = index
+                    содан { card с Selected = true }
+                    басқа card)
             { Cards = cards; FirstSelection = Some id; SecondSelection = Some index }
         | Some id, Some id' when cardsEqual id' index (model.Cards) ->
-            let cards =
+            болсын cards =
                 model.Cards
-                |> List.map (fun card ->
-                    if (card.Id = id && not card.MatchFound)
-                    then { card with Selected = false }
-                    elif (card.Id = id' || card.Id = index)
-                    then { card with Selected = true; MatchFound = true }
-                    else card)
-            { model with Cards = cards; FirstSelection = None; SecondSelection = None }
+                |> List.map (функ card ->
+                    егер (card.Id = id && not card.MatchFound)
+                    содан { card с Selected = false }
+                    басегер (card.Id = id' || card.Id = index)
+                    содан { card с Selected = true; MatchFound = true }
+                    басқа card)
+            { model с Cards = cards; FirstSelection = None; SecondSelection = None }
         | Some id, Some id' ->
-            let cards =
+            болсын cards =
                 model.Cards
-                 |> List.map (fun card ->
-                      if (card.Id = id || card.Id = id') && not card.MatchFound
-                      then { card with Selected = false }
-                      elif card.Id = index
-                      then { card with Selected = true }
-                      else card
+                 |> List.map (функ card ->
+                      егер (card.Id = id || card.Id = id') && not card.MatchFound
+                      содан { card с Selected = false }
+                      басегер card.Id = index
+                      содан { card с Selected = true }
+                      басқа card
                  )
             { Cards = cards; FirstSelection = Some index; SecondSelection = None }
         | _, _ -> failwith "Cannot happen :)"
     | NoOp -> model
 
 // View
-let cardClicked (card: Card) dispatch  =
-   if not (card.MatchFound) && not (card.Selected)
-   then dispatch (SelectCard card.Id)
-   else dispatch (NoOp)
+болсын cardClicked (card: Card) dispatch  =
+   егер not (card.MatchFound) && not (card.Selected)
+   содан dispatch (SelectCard card.Id)
+   басқа dispatch (NoOp)
 
-let viewCard (card: Card) dispatch =
+болсын viewCard (card: Card) dispatch =
     div
-      [ classList [ "card-container", true; "match-found", card.MatchFound]
-        OnClick (fun _ -> cardClicked card dispatch) ]
-      [ img [ Src (if card.Selected then card.ImgUrl else origin + "img/memory/fable.jpg") ] ]
+      [ classList [ "card-container", true; "сәйкестік-found", card.MatchFound]
+        OnClick (функ _ -> cardClicked card dispatch) ]
+      [ img [ Src (егер card.Selected содан card.ImgUrl басқа origin + "img/memory/fable.jpg") ] ]
 
-let view model dispatch =
-    if gameCleared model then
+болсын view model dispatch =
+    егер gameCleared model содан
         h1
           [ Class "winner centered"
             Style [ Padding 20; Width "500px" ]
-            OnClick (fun _ -> dispatch StartNewGame ) ]
+            OnClick (функ _ -> dispatch StartNewGame ) ]
           [ str "You win, Click me to play again" ]
-    else
+    басқа
         div [ Class "container centered"
               Style [ Width "500px" ] ]
-            [ for card in model.Cards -> viewCard card dispatch ]
+            [ үшін card ішінде model.Cards -> viewCard card dispatch ]
 
 // App
 Program.mkSimple initialModel update view

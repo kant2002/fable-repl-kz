@@ -1,11 +1,11 @@
 // More info about Fulma at https://mangelmaxime.github.io/Fulma/
-module Fulma.IconSample
+модуль Fulma.IconSample
 
-open Fable.React
-open Fable.React.Props
-open Fulma
+ашық Fable.React
+ашық Fable.React.Props
+ашық Fulma
 
-let containerSizes () =
+болсын containerSizes () =
   div [ Class "container-sizes" ]
    [ div [ Class "block" ]
         [ Icon.icon [ Icon.Size IsSmall ] // Container size
@@ -34,7 +34,7 @@ let containerSizes () =
    ]
 
 // Diplay Font Awesome Rotation & Flip
-let iconRotationFlip () =
+болсын iconRotationFlip () =
     div [ Class "block" ]
         [ ul [ ]
              [ li [ ]
@@ -59,7 +59,7 @@ let iconRotationFlip () =
                     str "Vertical flip" ] ] ]
 
 //Display Font Awesome Animations
-let iconAnimations () =
+болсын iconAnimations () =
     div [ Class "block" ]
         [ ul [ ]
              [ li [ ]
@@ -78,24 +78,24 @@ let iconAnimations () =
                     str "Spin animation" ] ] ]
 
 //Stacked Icons
-let stackedIcons () =
+болсын stackedIcons () =
     div [ Class "block" ]
         [ ul [ ]
              [ li [ ]
                   [ span [ Class "fa-stack fa-lg" ]
                         [ i [ Class "far fa-square fa-stack-2x" ] []
                           i [ Class "fab fa-twitter fa-stack-1x" ] [] ]
-                    str "Twitter logo over a square with round corners" ]
+                    str "Twitter logo over a square с round corners" ]
                li [ ]
                   [ span [ Class "fa-stack fa-lg" ]
                         [ i [ Class "fas fa-circle fa-stack-2x" ] []
                           i [ Class "fas fa-flag fa-stack-1x fa-inverse" ] [] ]
-                    str "One flag with inversed color over a circle" ] ] ]
+                    str "One flag с inversed color over a circle" ] ] ]
 
 //Display Font Awesome Icon List
-let iconList () =
+болсын iconList () =
     div [ Class "block" ]
-        [ // fa-ul creates an unordered list with icons instead of the classic bullet points
+        [ // fa-ul creates an unordered list с icons instead бастап the classic bullet points
           ul [ Class "fa-ul" ]
             [ li [ ]
                 [ Icon.icon [ ]
@@ -106,7 +106,7 @@ let iconList () =
                     [ i [ Class "fas fa-spinner fa-spin"] [] ]
                   str "Item processing" ] ] ]
 
-let borderPulledIcons () =
+болсын borderPulledIcons () =
     div [ Class "block" ]
         [ span [ ]
                [ Icon.icon [ ]
@@ -116,14 +116,14 @@ let borderPulledIcons () =
                      Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.\
                      Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat.." ] ]
 
-let fontAwesomeIcons () =
+болсын fontAwesomeIcons () =
     div [ Class "block" ]
         [ Icon.icon [ Icon.Size IsSmall ] [ i [ Class "fas fa-home" ] [] ]
           Icon.icon [ ] [ i [ Class "fas fa-tag fa-lg"] [] ]
           Icon.icon [ Icon.Size IsMedium ] [ i [ Class "fab fa-500px fa-2x"] [] ]
           Icon.icon [ Icon.Size IsLarge ] [ i [ Class "fab fa-android fa-3x"] [] ] ]
 
-let composeButtons () =
+болсын composeButtons () =
     div [ Class "block" ]
         [ Button.button [ Button.Color IsDanger ]
                         [ Icon.icon [ ]

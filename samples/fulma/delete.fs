@@ -1,11 +1,11 @@
 // More info about Fulma at https://mangelmaxime.github.io/Fulma/
-module Fulma.Delete
+модуль Fulma.Delete
 
-open Fable.React
-open Fable.React.Props
-open Fulma
+ашық Fable.React
+ашық Fable.React.Props
+ашық Fulma
 
-let demoInteractive () =
+болсын demoInteractive () =
     div [ Class "block" ]
         [ Delete.delete
             [ Delete.Size IsSmall ] [ ]

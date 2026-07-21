@@ -1,11 +1,11 @@
 // More info about Fulma at https://mangelmaxime.github.io/Fulma/
-module Fulma.Form
+модуль Fulma.Form
 
-open Fable.React
-open Fable.React.Props
-open Fulma
+ашық Fable.React
+ашық Fable.React.Props
+ашық Fulma
 
-let basic() =
+болсын basic() =
     form [ ]
          [ // Name field
            Field.div [ ]
@@ -67,7 +67,7 @@ let basic() =
                 [ Control.div [ ]
                     [ Checkbox.checkbox [ ]
                         [ Checkbox.input [ ]
-                          str "I agree with the terms and conditions" ] ] ]
+                          str "I agree с the terms and conditions" ] ] ]
            // Validation fields
            Field.div [ ]
                 [ Control.div [ ]

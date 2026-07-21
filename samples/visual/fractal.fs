@@ -1,50 +1,50 @@
 // Fractal playground by Mark Pattison (Twitter @mark_pattison)
-// Source code available in Github: https://github.com/markpattison/FableFractal
+// Source code available ішінде Github: https://github.com/markpattison/FableFractal
 
-module Elmish =
+модуль Elmish =
 
-    open System
-    open Fable.Core
-    open Browser
-    open Browser.Types
+    ашық System
+    ашық Fable.Core
+    ашық Browser
+    ашық Browser.Types
 
     // ------------------------------------------------------------------------------------------------
     // Virtual Dom bindings
     // ------------------------------------------------------------------------------------------------
 
-    type IVirtualdom =
+    түрі IVirtualdom =
         abstract h: arg1: string * arg2: obj * arg3: obj[] -> obj
         abstract diff: tree1:obj * tree2:obj -> obj
         abstract patch: node:obj * patches:obj -> Node
         abstract create: e:obj -> Node
 
     [<Global("virtualDom")>]
-    let Virtualdom: IVirtualdom = jsNative
+    болсын Virtualdom: IVirtualdom = jsNative
 
     // ------------------------------------------------------------------------------------------------
-    // F# representation of DOM and rendering using VirtualDom
+    // F# representation бастап DOM and rendering using VirtualDom
     // ------------------------------------------------------------------------------------------------
 
-    type DomAttribute =
-        | EventHandler of (Event -> unit)
-        | Attribute of string
-        | Property of string
+    түрі DomAttribute =
+        | EventHandler бастап (Event -> unit)
+        | Attribute бастап string
+        | Property бастап string
 
-    type DomNode =
-        | Text of string
-        | Element of tag:string * attributes:(string * DomAttribute)[] * children : DomNode[]
+    түрі DomNode =
+        | Text бастап string
+        | Element бастап tag:string * attributes:(string * DomAttribute)[] * children : DomNode[]
 
-    let createTree tag args children =
-            let attrs = ResizeArray<_>()
-            let props = ResizeArray<_>()
-            for k, v in args do
-                match k, v with
+    болсын createTree tag args children =
+            болсын attrs = ResizeArray<_>()
+            болсын props = ResizeArray<_>()
+            үшін k, v ішінде args жасау
+                сәйкестік k, v с
                 | "style", Attribute v
                 | "style", Property v ->
-                        let args = v.Split(';') |> Array.map (fun a ->
-                            let sep = a.IndexOf(':')
-                            if sep > 0 then a.Substring(0, sep), box (a.Substring(sep+1))
-                            else a, box "" )
+                        болсын args = v.Split(';') |> Array.map (функ a ->
+                            болсын sep = a.IndexOf(':')
+                            егер sep > 0 содан a.Substring(0, sep), box (a.Substring(sep+1))
+                            басқа a, box "" )
                         props.Add ("style", JsInterop.createObj args)
                 | "class", Attribute v
                 | "class", Property v ->
@@ -55,133 +55,133 @@ module Elmish =
                         props.Add (k, box v)
                 | k, EventHandler f ->
                         props.Add (k, box f)
-            let attrs = JsInterop.createObj attrs
-            let props = JsInterop.createObj (Seq.append ["attributes", attrs] props)
-            let elem = Virtualdom.h(tag, props, children)
+            болсын attrs = JsInterop.createObj attrs
+            болсын props = JsInterop.createObj (Seq.append ["attributes", attrs] props)
+            болсын elem = Virtualdom.h(tag, props, children)
             elem
 
-    let rec render node =
-        match node with
+    болсын rec render node =
+        сәйкестік node с
         | Text(s) ->
                 box s
         | Element(tag, attrs, children) ->
                 createTree tag attrs (Array.map render children)
 
     // ------------------------------------------------------------------------------------------------
-    // Helpers for dynamic property access & for creating HTML elements
+    // Helpers үшін dynamic property access & үшін creating HTML elements
     // ------------------------------------------------------------------------------------------------
 
-    type Dynamic() =
+    түрі Dynamic() =
         [<Emit("$0[$1]")>]
-        static member (?) (d:Dynamic, s:string) : Dynamic = jsNative
+        статикалық мүшесі (?) (d:Dynamic, s:string) : Dynamic = jsNative
 
-    let text s = Text(s)
-    let (=>) k v = k, Property(v)
-    let (=!>) k f = k, EventHandler(fun e -> f e)
+    болсын text s = Text(s)
+    болсын (=>) k v = k, Property(v)
+    болсын (=!>) k f = k, EventHandler(функ e -> f e)
 
-    type El() =
-        static member (?) (_:El, n:string) = fun a b ->
+    түрі El() =
+        статикалық мүшесі (?) (_:El, n:string) = функ a b ->
             Element(n, Array.ofList a, Array.ofList b)
 
-    let h = El()
+    болсын h = El()
 
     // ------------------------------------------------------------------------------------------------
     // Entry point - create event and update on trigger
     // ------------------------------------------------------------------------------------------------
 
-    type Cmd<'Msg> = (('Msg -> unit) -> unit) list
+    түрі Cmd<'Msg> = (('Msg -> unit) -> unit) list
 
-    type SingleObservable<'T>() =
-        let mutable listener: IObserver<'T> option = None
-        member _.Trigger v =
-            match listener with
+    түрі SingleObservable<'T>() =
+        болсын mutable listener: IObserver<'T> option = None
+        мүшесі _.Trigger v =
+            сәйкестік listener с
             | Some lis -> lis.OnNext v
             | None -> ()
-        interface IObservable<'T> with
-            member _.Subscribe w =
+        interface IObservable<'T> с
+            мүшесі _.Subscribe w =
                 listener <- Some w
-                { new IDisposable with
-                    member _.Dispose() = () }
+                { жаңа IDisposable с
+                    мүшесі _.Dispose() = () }
 
-    let app id (init: unit -> 'Model * Cmd<'Msg>) update view =
-        let event = new Event<'Msg>()
-        let trigger e = event.Trigger(e)
-        let model, cmds = init()
-        let mutable state = model
-        let mutable tree = view state trigger |> render
-        let mutable container = Virtualdom.create(tree)
+    болсын app id (init: unit -> 'Model * Cmd<'Msg>) update view =
+        болсын event = жаңа Event<'Msg>()
+        болсын trigger e = event.Trigger(e)
+        болсын model, cmds = init()
+        болсын mutable state = model
+        болсын mutable tree = view state trigger |> render
+        болсын mutable container = Virtualdom.create(tree)
         document.getElementById(id).appendChild(container) |> ignore
 
-        let handleEvent evt =
-            let model, cmds = update evt state
-            let newTree = view model trigger |> render
-            let patches = Virtualdom.diff(tree, newTree)
+        болсын handleEvent evt =
+            болсын model, cmds = update evt state
+            болсын newTree = view model trigger |> render
+            болсын patches = Virtualdom.diff(tree, newTree)
             container <- Virtualdom.patch(container, patches)
             tree <- newTree
             state <- model
-            for cmd in cmds do
+            үшін cmd ішінде cmds жасау
                 cmd trigger
 
         event.Publish.Add(handleEvent)
-        for cmd in cmds do
+        үшін cmd ішінде cmds жасау
             cmd trigger
 
-module WebGLHelper =
+модуль WebGLHelper =
 
-  open Browser.Types
-  open Fable.Core.JsInterop
+  ашық Browser.Types
+  ашық Fable.Core.JsInterop
 
   // Shorthand
-  type GL = WebGLRenderingContext
+  түрі GL = WebGLRenderingContext
 
-  let getWebGLContext (canvas: HTMLCanvasElement) =
-      let getContext ctxString =
+  болсын getWebGLContext (canvas: HTMLCanvasElement) =
+      болсын getContext ctxString =
           canvas.getContext(ctxString, createObj [ "premultipliedAlpha" ==> false ]) |> unbox<WebGLRenderingContext>
 
-      let webgl = getContext "webgl"
+      болсын webgl = getContext "webgl"
 
-      // If we have webgl = null in JS then try to get experimental-webgl
+      // If we have webgl = null ішінде JS содан try to get experimental-webgl
       // Edge and webkit use experimental-webgl
-      if not (unbox webgl) then
+      егер not (unbox webgl) содан
           getContext "experimental-webgl"
-      else
+      басқа
           webgl
 
-  let createShaderProgram (gl:GL) vertex fragment =
-      let vertexShader = gl.createShader(gl.VERTEX_SHADER)
+  болсын createShaderProgram (gl:GL) vertex fragment =
+      болсын vertexShader = gl.createShader(gl.VERTEX_SHADER)
       gl.shaderSource(vertexShader, vertex)
       gl.compileShader(vertexShader)
 
-      let fragShader = gl.createShader(gl.FRAGMENT_SHADER)
+      болсын fragShader = gl.createShader(gl.FRAGMENT_SHADER)
       gl.shaderSource(fragShader, fragment)
       gl.compileShader(fragShader)
 
-      let program = gl.createProgram()
+      болсын program = gl.createProgram()
       gl.attachShader(program, vertexShader)
       gl.attachShader(program, fragShader)
       gl.linkProgram(program)
 
       program
 
-  let createUniformLocation (gl:GL) program name =
-      let uniformLocation = gl.getUniformLocation(program, name)
+  болсын createUniformLocation (gl:GL) program name =
+      болсын uniformLocation = gl.getUniformLocation(program, name)
       uniformLocation
 
-  let createAttributeLocation (gl : GL) program name =
-      let attributeLocation = gl.getAttribLocation(program, name)
+  болсын createAttributeLocation (gl : GL) program name =
+      болсын attributeLocation = gl.getAttribLocation(program, name)
       gl.enableVertexAttribArray(attributeLocation)
 
       attributeLocation
 
-  let createBuffer (items : float[]) (gl:GL) =
-      let buffer = gl.createBuffer()
+  болсын createBuffer (items : float[]) (gl:GL) =
+      болсын buffer = gl.createBuffer()
 
       gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
       gl.bufferData(gl.ARRAY_BUFFER, (createNew Fable.Core.JS.Constructors.Float32Array items) |> unbox, gl.STATIC_DRAW)
 
       buffer
 
-  let clear (gl:GL) (width, height) =
+  болсын clear (gl:GL) (width, height) =
       gl.clearColor(1.0, 1.0, 1.0, 1.0)
 
       gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
@@ -191,38 +191,38 @@ module WebGLHelper =
       gl.viewport(0., 0., width, height)
       gl.clear(float (int gl.COLOR_BUFFER_BIT ||| int gl.DEPTH_BUFFER_BIT))
 
-module Types =
+модуль Types =
 
-  open Browser.Types
+  ашық Browser.Types
 
-  type Msg =
+  түрі Msg =
       | MandelbrotClick
       | JuliaClick
       | JuliaMoveClick
       | JuliaChangeSeedClick
-      | MouseDownMsg of MouseEvent
-      | MouseUpMsg of MouseEvent
-      | MouseMoveMsg of MouseEvent
-      | MouseLeaveMsg of MouseEvent
-    //   | WheelMsg of WheelEvent
-    //   | TouchStartMsg of TouchEvent
-    //   | TouchEndMsg of TouchEvent
-    //   | TouchMoveMsg of TouchEvent
+      | MouseDownMsg бастап MouseEvent
+      | MouseUpMsg бастап MouseEvent
+      | MouseMoveMsg бастап MouseEvent
+      | MouseLeaveMsg бастап MouseEvent
+    //   | WheelMsg бастап WheelEvent
+    //   | TouchStartMsg бастап TouchEvent
+    //   | TouchEndMsg бастап TouchEvent
+    //   | TouchMoveMsg бастап TouchEvent
       | RenderMsg
 
-  type JuliaSeed = { SeedX: float; SeedY: float }
-  type JuliaScrolling = Move | ChangeSeed
+  түрі JuliaSeed = { SeedX: float; SeedY: float }
+  түрі JuliaScrolling = Move | ChangeSeed
 
-  type FractalType =
+  түрі FractalType =
       | Mandelbrot
-      | Julia of JuliaSeed * JuliaScrolling
+      | Julia бастап JuliaSeed * JuliaScrolling
 
-  type Transform =
-      | Scrolling of float * float
-      | Pinching of float
+  түрі Transform =
+      | Scrolling бастап float * float
+      | Pinching бастап float
       | NoTransform
 
-  type Model =
+  түрі Model =
       {
           CanvasHeight: float
           Zoom: float
@@ -234,15 +234,15 @@ module Types =
           Transform: Transform
       }
 
-module FractalRenderer =
+модуль FractalRenderer =
 
-  open System
-  open Browser
-  open Browser.Types
-  open WebGLHelper
-  open Types
+  ашық System
+  ашық Browser
+  ашық Browser.Types
+  ашық WebGLHelper
+  ашық Types
 
-  let myVertex = """
+  болсын myVertex = """
       precision highp float;
       precision highp int;
 
@@ -255,7 +255,7 @@ module FractalRenderer =
       }
   """
 
-  let myFragment = """
+  болсын myFragment = """
       precision highp float;
       precision highp int;
       uniform float uWidthOverHeight;
@@ -308,21 +308,21 @@ module FractalRenderer =
           float result = 0.0;
           vec2 zsq = z * z;
           int iterations = 0;
-          for (int i = 0; i < 128; i++)
+          үшін (int i = 0; i < 128; i++)
           {
               iterations = i;
-              if (zsq.x + zsq.y > 49.0)
+              егер (zsq.x + zsq.y > 49.0)
               {
                   break;
               }
               z = f(z, offset);
               zsq = z * z;
           }
-          if (iterations == 127)
+          егер (iterations == 127)
           {
               result = 0.0;
           }
-          else
+          басқа
           {
               result = float(iterations) + (log(2.0 * log(7.0)) - log(log(zsq.x + zsq.y))) / log(2.0);
               result = log(result * 0.4) / log(128.0);
@@ -337,8 +337,8 @@ module FractalRenderer =
       }
   """
 
-  let initBuffers gl =
-      let positions =
+  болсын initBuffers gl =
+      болсын positions =
           createBuffer
               [|
                   -1.0; -1.0;
@@ -346,7 +346,7 @@ module FractalRenderer =
                   -1.0;  1.0;
                     1.0;  1.0
               |] gl
-      let textureCoords =
+      болсын textureCoords =
           createBuffer
               [|
                   0.0; 0.0;
@@ -356,31 +356,31 @@ module FractalRenderer =
               |] gl
       positions, textureCoords
 
-  let create (holder : Element) =
+  болсын create (holder : Element) =
 
-      let canvas = document.createElement "canvas" :?> HTMLCanvasElement
-      let width = 640
-      let height = 480
+      болсын canvas = document.createElement "canvas" :?> HTMLCanvasElement
+      болсын width = 640
+      болсын height = 480
 
       canvas.width <- float width
       canvas.height <- float height
 
       holder.appendChild(canvas) |> ignore
 
-      let context = getWebGLContext canvas
+      болсын context = getWebGLContext canvas
 
-      let program = createShaderProgram context myVertex myFragment
+      болсын program = createShaderProgram context myVertex myFragment
 
-      let positionBuffer, colourBuffer = initBuffers context
-      let vertexPositionAttribute = createAttributeLocation context program "aVertexPosition"
-      let textureCoordAttribute = createAttributeLocation context program "aTextureCoord"
-      let widthOverHeightUniform = createUniformLocation context program "uWidthOverHeight"
-      let zoomUniform = createUniformLocation context program "uZoom"
-      let offsetUniform = createUniformLocation context program "uOffset"
-      let juliaSeedUniform = createUniformLocation context program "uJuliaSeed"
-      let isJuliaUniform = createUniformLocation context program "uIsJulia"
+      болсын positionBuffer, colourBuffer = initBuffers context
+      болсын vertexPositionAttribute = createAttributeLocation context program "aVertexPosition"
+      болсын textureCoordAttribute = createAttributeLocation context program "aTextureCoord"
+      болсын widthOverHeightUniform = createUniformLocation context program "uWidthOverHeight"
+      болсын zoomUniform = createUniformLocation context program "uZoom"
+      болсын offsetUniform = createUniformLocation context program "uOffset"
+      болсын juliaSeedUniform = createUniformLocation context program "uJuliaSeed"
+      болсын isJuliaUniform = createUniformLocation context program "uIsJulia"
 
-      let draw widthOverHeight zoom x y jx jy isJulia =
+      болсын draw widthOverHeight zoom x y jx jy isJulia =
           context.useProgram(program)
 
           context.bindBuffer(context.ARRAY_BUFFER, positionBuffer)
@@ -392,29 +392,29 @@ module FractalRenderer =
           context.uniform1f(zoomUniform, zoom)
           context.uniform2f(offsetUniform, x, y)
           context.uniform2f(juliaSeedUniform, jx, jy)
-          context.uniform1i(isJuliaUniform, if isJulia then 1.0 else 0.0)
+          context.uniform1i(isJuliaUniform, егер isJulia содан 1.0 басқа 0.0)
 
           context.drawArrays (context.TRIANGLE_STRIP, 0., 4.0)
 
-      let clear = clear context
+      болсын clear = clear context
 
-      // Try not to use "context" after this point, bind a function above.
+      // Try not to use "context" after this point, bind a функция above.
 
-      let imageLoadCanvas = document.createElement "canvas" :?> HTMLCanvasElement
-      let imageLoadCanvasContext = imageLoadCanvas.getContext_2d()
+      болсын imageLoadCanvas = document.createElement "canvas" :?> HTMLCanvasElement
+      болсын imageLoadCanvasContext = imageLoadCanvas.getContext_2d()
 
-      let mutable last = DateTime.Now
+      болсын mutable last = DateTime.Now
 
-      let render model =
-          match model with
+      болсын render model =
+          сәйкестік model с
           | model when model.Now <> last ->
               last <- model.Now
 
-              let resolution = canvas.width, canvas.height
-              let widthOverHeight = if canvas.height = 0.0 then 1.0 else canvas.width / canvas.height
+              болсын resolution = canvas.width, canvas.height
+              болсын widthOverHeight = егер canvas.height = 0.0 содан 1.0 басқа canvas.width / canvas.height
               clear resolution
 
-              match model.FractalType with
+              сәйкестік model.FractalType с
               | Mandelbrot ->
                   draw widthOverHeight model.Zoom model.X model.Y 0.0 0.0 false
               | Julia ({ SeedX = seedX; SeedY = seedY }, _) ->
@@ -424,27 +424,27 @@ module FractalRenderer =
 
       render, height
 
-module State =
+модуль State =
 
-    open Browser
-    open Browser.Types
-    open Fable.Core.JsInterop
-    open Types
+    ашық Browser
+    ашық Browser.Types
+    ашық Fable.Core.JsInterop
+    ашық Types
 
-    // type INormalizedWheel =
-    //     abstract member pixelX: float
-    //     abstract member pixelY: float
-    //     abstract member spinX: float
-    //     abstract member spinY: float
+    // түрі INormalizedWheel =
+    //     abstract мүшесі pixelX: float
+    //     abstract мүшесі pixelY: float
+    //     abstract мүшесі spinX: float
+    //     abstract мүшесі spinY: float
 
-    // let normalizeWheel : WheelEvent -> INormalizedWheel = importDefault "normalize-wheel"
+    // болсын normalizeWheel : WheelEvent -> INormalizedWheel = importDefault "normalize-wheel"
 
-    let renderCommand =
-        let sub dispatch =
-            window.requestAnimationFrame(fun _ -> dispatch RenderMsg) |> ignore
+    болсын renderCommand =
+        болсын sub dispatch =
+            window.requestAnimationFrame(функ _ -> dispatch RenderMsg) |> ignore
         [sub]
 
-    let initMandelbrot =
+    болсын initMandelbrot =
         {
             CanvasHeight = 1.0
             Zoom = 0.314
@@ -456,7 +456,7 @@ module State =
             Transform = NoTransform
         }
 
-    let initJulia =
+    болсын initJulia =
         {
             CanvasHeight = 1.0
             Zoom = 0.314
@@ -468,27 +468,27 @@ module State =
             Transform = NoTransform
         }
 
-    let init() =
-        document.addEventListener("gesturestart", (fun e -> e.preventDefault()), true)
-        document.addEventListener("gesturechange", (fun e -> e.preventDefault()), true)
-        document.addEventListener("gestureend", (fun e -> e.preventDefault()), true)
-        document.addEventListener("scroll", (fun e -> e.preventDefault()), true)
+    болсын init() =
+        document.addEventListener("gesturestart", (функ e -> e.preventDefault()), true)
+        document.addEventListener("gesturechange", (функ e -> e.preventDefault()), true)
+        document.addEventListener("gestureend", (функ e -> e.preventDefault()), true)
+        document.addEventListener("scroll", (функ e -> e.preventDefault()), true)
         initMandelbrot, renderCommand
 
-    let updateForMove x y model =
-        match model.Transform with
+    болсын updateForMove x y model =
+        сәйкестік model.Transform с
         | Scrolling (lastScreenX, lastScreenY) ->
-            { model with
+            { model с
                 X = model.X - (x - lastScreenX) / (model.Zoom * model.CanvasHeight)
                 Y = model.Y + (y - lastScreenY) / (model.Zoom * model.CanvasHeight)
                 Transform = Scrolling (x, y)
             }, []
         | _ -> model, []
 
-    let updateForSeedChange seed x y model =
-        match model.Transform with
+    болсын updateForSeedChange seed x y model =
+        сәйкестік model.Transform с
         | Scrolling (lastScreenX, lastScreenY) ->
-            { model with
+            { model с
                 FractalType = Julia ( {
                                         SeedX = seed.SeedX - (x - lastScreenX) / (model.Zoom * model.CanvasHeight)
                                         SeedY = seed.SeedY - (y - lastScreenY) / (model.Zoom * model.CanvasHeight)}, ChangeSeed)
@@ -496,32 +496,32 @@ module State =
             }, []
         | _ -> model, []
 
-    let update msg model =
-        match model.FractalType, msg with
+    болсын update msg model =
+        сәйкестік model.FractalType, msg с
         | Julia _, MandelbrotClick _ ->
-            { model with
+            { model с
                 Zoom = 0.314; FractalType = Mandelbrot; X = -0.5; Y = 0.0
             }, []
 
         | Mandelbrot, JuliaClick ->
-            { model with
+            { model с
                 Zoom = 0.314; FractalType = Julia ({ SeedX = 0.0; SeedY = 0.0 }, ChangeSeed); X = 0.0; Y = 0.0
             }, []
 
         | Julia (seed, _), JuliaMoveClick ->
-            { model with FractalType = Julia (seed, Move) }, []
+            { model с FractalType = Julia (seed, Move) }, []
 
         | Julia (seed, _), JuliaChangeSeedClick ->
-            { model with FractalType = Julia (seed, ChangeSeed) }, []
+            { model с FractalType = Julia (seed, ChangeSeed) }, []
 
         | _, MouseDownMsg me when me.button = 0.0 ->
-            { model with
+            { model с
                 Transform = Scrolling (me.screenX, me.screenY)
             }, []
 
-        | _, MouseUpMsg me when me.button = 0.0 -> { model with Transform = NoTransform }, []
+        | _, MouseUpMsg me when me.button = 0.0 -> { model с Transform = NoTransform }, []
 
-        | _, MouseLeaveMsg _ -> { model with Transform = NoTransform }, []
+        | _, MouseLeaveMsg _ -> { model с Transform = NoTransform }, []
 
         | Mandelbrot, MouseMoveMsg me
         | Julia (_, Move), MouseMoveMsg me ->
@@ -531,21 +531,21 @@ module State =
             updateForSeedChange seed me.screenX me.screenY model
 
         // | _, WheelMsg we ->
-        //     let zoom = (normalizeWheel we).pixelY / 100.0
-        //     { model with Zoom = model.Zoom * 0.99 ** zoom }, []
+        //     болсын zoom = (normalizeWheel we).pixelY / 100.0
+        //     { model с Zoom = model.Zoom * 0.99 ** zoom }, []
 
-        // | _, TouchEndMsg _ -> { model with Transform = NoTransform }, []
+        // | _, TouchEndMsg _ -> { model с Transform = NoTransform }, []
 
         // | _, TouchStartMsg te when te.touches.Length = 1 ->
-        //     { model with
+        //     { model с
         //         Transform = Scrolling (te.touches.[0].clientX, te.touches.[0].clientY)
         //     }, []
 
         // | _, TouchStartMsg te when te.touches.Length = 2 ->
-        //     let dx = te.touches.[1].clientX - te.touches.[0].clientX
-        //     let dy = te.touches.[1].clientY - te.touches.[0].clientY
-        //     let distance = sqrt (dx * dx + dy * dy)
-        //     { model with
+        //     болсын dx = te.touches.[1].clientX - te.touches.[0].clientX
+        //     болсын dy = te.touches.[1].clientY - te.touches.[0].clientY
+        //     болсын distance = sqrt (dx * dx + dy * dy)
+        //     { model с
         //         Transform = Pinching distance
         //     }, []
 
@@ -558,40 +558,40 @@ module State =
 
         // | Mandelbrot, TouchMoveMsg te
         // | Julia _, TouchMoveMsg te when te.touches.Length = 2 ->
-        //     match model.Transform with
+        //     сәйкестік model.Transform с
         //     | Pinching lastDistance ->
-        //         let dx = te.touches.[1].clientX - te.touches.[0].clientX
-        //         let dy = te.touches.[1].clientY - te.touches.[0].clientY
-        //         let distance = sqrt (dx * dx + dy * dy)
-        //         { model with
+        //         болсын dx = te.touches.[1].clientX - te.touches.[0].clientX
+        //         болсын dy = te.touches.[1].clientY - te.touches.[0].clientY
+        //         болсын distance = sqrt (dx * dx + dy * dy)
+        //         { model с
         //             Zoom = model.Zoom * 0.99 ** (lastDistance - distance)
         //             Transform = Pinching distance
         //         }, []
         //     | _ -> model, []
 
         | _, RenderMsg ->
-            match model.Render with
+            сәйкестік model.Render с
             | None ->
-                let holder = document.getElementById("Fractal")
-                match holder with
+                болсын holder = document.getElementById("Fractal")
+                сәйкестік holder с
                 | null -> model, renderCommand
                 | h ->
-                    let renderer, height = FractalRenderer.create h
-                    { model with Render = Some renderer; CanvasHeight = float height }, renderCommand
+                    болсын renderer, height = FractalRenderer.create h
+                    { model с Render = Some renderer; CanvasHeight = float height }, renderCommand
             | Some render ->
                 render model
-                { model with Now = System.DateTime.Now }, renderCommand
+                { model с Now = System.DateTime.Now }, renderCommand
 
         | _ -> model, []
 
-module View =
+модуль View =
 
-    open Elmish
-    open Types
-    open State
+    ашық Elmish
+    ашық Types
+    ашық State
 
-    let showParams model =
-        match model.FractalType with
+    болсын showParams model =
+        сәйкестік model.FractalType с
         | Julia (seed, _) ->
             [
                 h?p [] [ Text $"X = %.6f{model.X}" ]
@@ -607,49 +607,49 @@ module View =
                 h?p [] [ Text $"Zoom = %.6f{model.Zoom}" ]
             ]
 
-    let showButtons model dispatch =
+    болсын showButtons model dispatch =
         h?div [] [
             h?div [ "class" => "field has-addons" ] [
                 h?button [
-                    (match model.FractalType with
+                    (сәйкестік model.FractalType с
                         | Mandelbrot -> "class" => "button is-primary is-selected"
                         | Julia _ -> "class" => "button")
-                    "onclick" =!> (fun _ -> MandelbrotClick |> dispatch)
+                    "onclick" =!> (функ _ -> MandelbrotClick |> dispatch)
                 ] [ Text "Mandelbrot" ]
                 h?button [
-                    (match model.FractalType with
+                    (сәйкестік model.FractalType с
                         | Mandelbrot -> "class" => "button"
                         | Julia _ -> "class" => "button is-primary is-selected")
-                    "onclick" =!> (fun _ -> JuliaClick |> dispatch)
+                    "onclick" =!> (функ _ -> JuliaClick |> dispatch)
                 ] [ Text "Julia" ]
             ]
             h?div [] [
-                match model.FractalType with
+                сәйкестік model.FractalType с
                 | Julia (_, scrollType) ->
                     yield h?button [
-                        (match scrollType with
+                        (сәйкестік scrollType с
                             | Move -> "class" => "button is-primary is-selected"
                             | ChangeSeed -> "class" => "button")
-                        "onclick" =!> (fun _ -> JuliaMoveClick |> dispatch)
+                        "onclick" =!> (функ _ -> JuliaMoveClick |> dispatch)
                     ] [ Text "Move" ]
                     yield h?button [
-                        (match scrollType with
+                        (сәйкестік scrollType с
                             | Move -> "class" => "button"
                             | ChangeSeed -> "class" => "button is-primary is-selected")
-                        "onclick" =!> (fun _ -> JuliaChangeSeedClick |> dispatch)
+                        "onclick" =!> (функ _ -> JuliaChangeSeedClick |> dispatch)
                     ] [ Text "ChangeSeed" ]
                 | _ -> ()
             ]
         ]
 
-    let hud model dispatch =
+    болсын hud model dispatch =
         h?div [ "class" => "columns" ] [
             h?div [ "class" => "column" ] (showParams model)
             h?div [ "class" => "column" ] [ showButtons model dispatch ]
         ]
 
-    let fractalCanvas dispatch =
-        let dispatch (msg: 'Event -> Msg) (e: Browser.Types.Event) =
+    болсын fractalCanvas dispatch =
+        болсын dispatch (msg: 'Event -> Msg) (e: Browser.Types.Event) =
             e.preventDefault()
             msg (e :?> 'Event) |> dispatch
 
@@ -666,7 +666,7 @@ module View =
             // "ontouchcancel" =!> dispatch TouchEndMsg
         ] []
 
-    let root model dispatch =
+    болсын root model dispatch =
         h?div [] [
             hud model dispatch
             fractalCanvas dispatch

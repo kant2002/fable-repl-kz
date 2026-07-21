@@ -1,11 +1,11 @@
 // More info about Fulma at https://mangelmaxime.github.io/Fulma/
-module Fulma.Media
+модуль Fulma.Media
 
-open Fable.React
-open Fable.React.Props
-open Fulma
+ашық Fable.React
+ашық Fable.React.Props
+ашық Fulma
 
-let basic () =
+болсын basic () =
     Media.media [ ]
         [ Media.left [ ]
             [ Image.image [ Image.Is64x64 ]

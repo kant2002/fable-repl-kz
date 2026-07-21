@@ -1,52 +1,52 @@
-module SpreadSheet
+модуль SpreadSheet
 
-// Build your own Excel 365 in an hour with F# by Tomas Petricek!
-// Watch the video of the talk here: https://www.youtube.com/watch?v=Bnm71YEt_lI
+// Build your own Excel 365 ішінде an hour с F# by Tomas Petricek!
+// Watch the video бастап the talk here: https://www.youtube.com/watch?v=Bnm71YEt_lI
 
-module Elmish =
+модуль Elmish =
 
-    open System
-    open Fable.Core
-    open Browser
-    open Browser.Types
+    ашық System
+    ашық Fable.Core
+    ашық Browser
+    ашық Browser.Types
 
     // ------------------------------------------------------------------------------------------------
     // Virtual Dom bindings
     // ------------------------------------------------------------------------------------------------
 
-    type IVirtualdom =
+    түрі IVirtualdom =
         abstract h: arg1: string * arg2: obj * arg3: obj[] -> obj
         abstract diff: tree1:obj * tree2:obj -> obj
         abstract patch: node:obj * patches:obj -> Node
         abstract create: e:obj -> Node
 
     [<Global("virtualDom")>]
-    let Virtualdom: IVirtualdom = jsNative
+    болсын Virtualdom: IVirtualdom = jsNative
 
     // ------------------------------------------------------------------------------------------------
-    // F# representation of DOM and rendering using VirtualDom
+    // F# representation бастап DOM and rendering using VirtualDom
     // ------------------------------------------------------------------------------------------------
 
-    type DomAttribute =
-        | EventHandler of (Event -> unit)
-        | Attribute of string
-        | Property of string
+    түрі DomAttribute =
+        | EventHandler бастап (Event -> unit)
+        | Attribute бастап string
+        | Property бастап string
 
-    type DomNode =
-        | Text of string
-        | Element of tag:string * attributes:(string * DomAttribute)[] * children : DomNode[]
+    түрі DomNode =
+        | Text бастап string
+        | Element бастап tag:string * attributes:(string * DomAttribute)[] * children : DomNode[]
 
-    let createTree tag args children =
-        let attrs = ResizeArray<_>()
-        let props = ResizeArray<_>()
-        for k, v in args do
-            match k, v with
+    болсын createTree tag args children =
+        болсын attrs = ResizeArray<_>()
+        болсын props = ResizeArray<_>()
+        үшін k, v ішінде args жасау
+            сәйкестік k, v с
             | "style", Attribute v
             | "style", Property v ->
-                    let args = v.Split(';') |> Array.map (fun a ->
-                        let sep = a.IndexOf(':')
-                        if sep > 0 then a.Substring(0, sep), box (a.Substring(sep+1))
-                        else a, box "" )
+                    болсын args = v.Split(';') |> Array.map (функ a ->
+                        болсын sep = a.IndexOf(':')
+                        егер sep > 0 содан a.Substring(0, sep), box (a.Substring(sep+1))
+                        басқа a, box "" )
                     props.Add ("style", JsInterop.createObj args)
             | "class", Attribute v
             | "class", Property v ->
@@ -57,297 +57,297 @@ module Elmish =
                     props.Add (k, box v)
             | k, EventHandler f ->
                     props.Add (k, box f)
-        let attrs = JsInterop.createObj attrs
-        let props = JsInterop.createObj (Seq.append ["attributes", attrs] props)
-        let elem = Virtualdom.h(tag, props, children)
+        болсын attrs = JsInterop.createObj attrs
+        болсын props = JsInterop.createObj (Seq.append ["attributes", attrs] props)
+        болсын elem = Virtualdom.h(tag, props, children)
         elem
 
-    let rec render node =
-        match node with
+    болсын rec render node =
+        сәйкестік node с
         | Text(s) ->
                 box s
         | Element(tag, attrs, children) ->
                 createTree tag attrs (Array.map render children)
 
     // ------------------------------------------------------------------------------------------------
-    // Helpers for dynamic property access & for creating HTML elements
+    // Helpers үшін dynamic property access & үшін creating HTML elements
     // ------------------------------------------------------------------------------------------------
 
-    type Dynamic() =
+    түрі Dynamic() =
         [<Emit("$0[$1]")>]
-        static member (?) (d:Dynamic, s:string) : Dynamic = jsNative
+        статикалық мүшесі (?) (d:Dynamic, s:string) : Dynamic = jsNative
 
-    let text s = Text(s)
-    let (=>) k v = k, Property(v)
-    let (=!>) k f = k, EventHandler(fun e -> f e)
+    болсын text s = Text(s)
+    болсын (=>) k v = k, Property(v)
+    болсын (=!>) k f = k, EventHandler(функ e -> f e)
 
-    type El() =
-        static member (?) (_:El, n:string) = fun a b ->
+    түрі El() =
+        статикалық мүшесі (?) (_:El, n:string) = функ a b ->
             Element(n, Array.ofList a, Array.ofList b)
 
-    let h = El()
+    болсын h = El()
 
     // ------------------------------------------------------------------------------------------------
     // Entry point - create event and update on trigger
     // ------------------------------------------------------------------------------------------------
 
-    type Cmd<'Msg> = (('Msg -> unit) -> unit) list
+    түрі Cmd<'Msg> = (('Msg -> unit) -> unit) list
 
-    type SingleObservable<'T>() =
-        let mutable listener: IObserver<'T> option = None
-        member _.Trigger v =
-            match listener with
+    түрі SingleObservable<'T>() =
+        болсын mutable listener: IObserver<'T> option = None
+        мүшесі _.Trigger v =
+            сәйкестік listener с
             | Some lis -> lis.OnNext v
             | None -> ()
-        interface IObservable<'T> with
-            member _.Subscribe w =
+        interface IObservable<'T> с
+            мүшесі _.Subscribe w =
                 listener <- Some w
-                { new IDisposable with
-                    member _.Dispose() = () }
+                { жаңа IDisposable с
+                    мүшесі _.Dispose() = () }
 
-    let app id (init: unit -> 'Model * Cmd<'Msg>) update view =
-        let event = new Event<'Msg>()
-        let trigger e = event.Trigger(e)
-        let model, cmds = init()
-        let mutable state = model
-        let mutable tree = view state trigger |> render
-        let mutable container = Virtualdom.create(tree)
+    болсын app id (init: unit -> 'Model * Cmd<'Msg>) update view =
+        болсын event = жаңа Event<'Msg>()
+        болсын trigger e = event.Trigger(e)
+        болсын model, cmds = init()
+        болсын mutable state = model
+        болсын mutable tree = view state trigger |> render
+        болсын mutable container = Virtualdom.create(tree)
         document.getElementById(id).appendChild(container) |> ignore
 
-        let handleEvent evt =
-            let model, cmds = update evt state
-            let newTree = view model trigger |> render
-            let patches = Virtualdom.diff(tree, newTree)
+        болсын handleEvent evt =
+            болсын model, cmds = update evt state
+            болсын newTree = view model trigger |> render
+            болсын patches = Virtualdom.diff(tree, newTree)
             container <- Virtualdom.patch(container, patches)
             tree <- newTree
             state <- model
-            for cmd in cmds do
+            үшін cmd ішінде cmds жасау
                 cmd trigger
 
         event.Publish.Add(handleEvent)
-        for cmd in cmds do
+        үшін cmd ішінде cmds жасау
             cmd trigger
 
-module Parsec =
-    type ParseStream<'T> = int * list<'T>
-    type Parser<'T, 'R> = Parser of (ParseStream<'T> -> option<ParseStream<'T> * 'R>)
+модуль Parsec =
+    түрі ParseStream<'T> = int * list<'T>
+    түрі Parser<'T, 'R> = Parser бастап (ParseStream<'T> -> option<ParseStream<'T> * 'R>)
 
-    /// Returned by the `slot` function to create a parser slot that is filled later
-    type ParserSetter<'T, 'R> =
+    /// Returned by the `slot` функция to create a parser slot that is filled later
+    түрі ParserSetter<'T, 'R> =
       { Set : Parser<'T, 'R> -> unit }
 
-    /// Ignore the result of the parser
-    let ignore (Parser p) = Parser(fun input ->
-      p input |> Option.map (fun (i, r) -> i, ()))
+    /// Ignore the result бастап the parser
+    болсын ignore (Parser p) = Parser(функ input ->
+      p input |> Option.map (функ (i, r) -> i, ()))
 
     /// Creates a delayed parser whose actual parser is set later
-    let slot () =
-      let mutable slot = None
-      { Set = fun (Parser p) -> slot <- Some p },
-      Parser(fun input ->
-        match slot with
+    болсын slot () =
+      болсын mutable slot = None
+      { Set = функ (Parser p) -> slot <- Some p },
+      Parser(функ input ->
+        сәйкестік slot с
         | Some slot -> slot input
         | None -> failwith "Slot not initialized")
 
     /// If the input matches the specified prefix, produce the specified result
-    let prefix (prefix:list<'C>) result = Parser(fun (offset, input) ->
-      let rec loop (word:list<'C>) input =
-        match word, input with
+    болсын prefix (prefix:list<'C>) result = Parser(функ (offset, input) ->
+      болсын rec loop (word:list<'C>) input =
+        сәйкестік word, input с
         | c::word, i::input when c = i -> loop word input
         | [], input -> Some(input)
         | _ -> None
 
-      match loop prefix input with
+      сәйкестік loop prefix input с
       | Some(input) -> Some((offset+List.length prefix, input), result)
       | _ -> None)
 
-    /// Parser that succeeds when either of the two arguments succeed
-    let (<|>) (Parser p1) (Parser p2) = Parser(fun input ->
-      match p1 input with
+    /// Parser that succeeds when either бастап the two arguments succeed
+    болсын (<|>) (Parser p1) (Parser p2) = Parser(функ input ->
+      сәйкестік p1 input с
       | Some(input, res) -> Some(input, res)
       | _ -> p2 input)
 
-    /// Run two parsers in sequence and return the result as a tuple
-    let (<*>) (Parser p1) (Parser p2) = Parser(fun input ->
-      match p1 input with
+    /// Run two parsers ішінде sequence and return the result as a tuple
+    болсын (<*>) (Parser p1) (Parser p2) = Parser(функ input ->
+      сәйкестік p1 input с
       | Some(input, res1) ->
-          match p2 input with
+          сәйкестік p2 input с
           | Some(input, res2) -> Some(input, (res1, res2))
           | _ -> None
       | _ -> None)
 
-    /// Transforms the result of the parser using the specified function
-    let map f (Parser p) = Parser(fun input ->
-      p input |> Option.map (fun (input, res) -> input, f res))
+    /// Transforms the result бастап the parser using the specified функция
+    болсын map f (Parser p) = Parser(функ input ->
+      p input |> Option.map (функ (input, res) -> input, f res))
 
-    /// Run two parsers in sequence and return the result of the second one
-    let (<*>>) p1 p2 = p1 <*> p2 |> map snd
+    /// Run two parsers ішінде sequence and return the result бастап the second one
+    болсын (<*>>) p1 p2 = p1 <*> p2 |> map snd
 
-    /// Run two parsers in sequence and return the result of the first one
-    let (<<*>) p1 p2 = p1 <*> p2 |> map fst
+    /// Run two parsers ішінде sequence and return the result бастап the first one
+    болсын (<<*>) p1 p2 = p1 <*> p2 |> map fst
 
     /// Succeed without consuming input
-    let unit res = Parser(fun input -> Some(input, res))
+    болсын unit res = Parser(функ input -> Some(input, res))
 
-    /// Parse using the first parser and then call a function to produce
-    /// next parser and parse the rest of the input with the next parser
-    let bind f (Parser p) = Parser(fun input ->
-      match p input with
+    /// Parse using the first parser and содан call a функция to produce
+    /// next parser and parse the rest бастап the input с the next parser
+    болсын bind f (Parser p) = Parser(функ input ->
+      сәйкестік p input с
       | Some(input, res) ->
-          let (Parser g) = f res
-          match g input with
+          болсын (Parser g) = f res
+          сәйкестік g input с
           | Some(input, res) -> Some(input, res)
           | _ -> None
       | _ -> None)
 
-    /// Parser that tries to use a specified parser, but returns None if it fails
-    let optional (Parser p) = Parser(fun input ->
-      match p input with
+    /// Parser that tries to use a specified parser, but returns None егер it fails
+    болсын optional (Parser p) = Parser(функ input ->
+      сәйкестік p input с
       | None -> Some(input, None)
       | Some(input, res) -> Some(input, Some res) )
 
-    /// Parser that succeeds if the input matches a predicate
-    let pred p = Parser(function
+    /// Parser that succeeds егер the input matches a predicate
+    болсын pred p = Parser(функция
       | offs, c::input when p c -> Some((offs+1, input), c)
       | _ -> None)
 
-    /// Parser that succeeds if the predicate returns Some value
-    let choose p = Parser(function
-      | offs, c::input -> p c |> Option.map (fun c -> (offs + 1, input), c)
+    /// Parser that succeeds егер the predicate returns Some value
+    болсын choose p = Parser(функция
+      | offs, c::input -> p c |> Option.map (функ c -> (offs + 1, input), c)
       | _ -> None)
 
     /// Parse zero or more repetitions using the specified parser
-    let zeroOrMore (Parser p) =
-      let rec loop acc input =
-        match p input with
+    болсын zeroOrMore (Parser p) =
+      болсын rec loop acc input =
+        сәйкестік p input с
         | Some(input, res) -> loop (res::acc) input
         | _ -> Some(input, List.rev acc)
       Parser(loop [])
 
     /// Parse one or more repetitions using the specified parser
-    let oneOrMore p =
+    болсын oneOrMore p =
       (p <*> (zeroOrMore p))
-      |> map (fun (c, cs) -> c::cs)
+      |> map (функ (c, cs) -> c::cs)
 
 
-    let anySpace = zeroOrMore (pred (fun t -> t = ' '))
+    болсын anySpace = zeroOrMore (pred (функ t -> t = ' '))
 
-    let char tok = pred (fun t -> t = tok)
+    болсын char tok = pred (функ t -> t = tok)
 
-    let separated sep p =
+    болсын separated sep p =
       p <*> zeroOrMore (sep <*> p)
-      |> map (fun (a1, args) -> a1::(List.map snd args))
+      |> map (функ (a1, args) -> a1::(List.map snd args))
 
-    let separatedThen sep p1 p2 =
+    болсын separatedThen sep p1 p2 =
       p1 <*> zeroOrMore (sep <*> p2)
-      |> map (fun (a1, args) -> a1::(List.map snd args))
+      |> map (функ (a1, args) -> a1::(List.map snd args))
 
-    let separatedOrEmpty sep p =
+    болсын separatedOrEmpty sep p =
       optional (separated sep p)
-      |> map (fun l -> defaultArg l [])
+      |> map (функ l -> defaultArg l [])
 
-    let number = pred (fun t -> t <= '9' && t >= '0')
+    болсын number = pred (функ t -> t <= '9' && t >= '0')
 
-    let integer = oneOrMore number |> map (fun nums ->
-      nums |> List.fold (fun res n -> res * 10 + (int n - int '0')) 0)
+    болсын integer = oneOrMore number |> map (функ nums ->
+      nums |> List.fold (функ res n -> res * 10 + (int n - int '0')) 0)
 
-    let letter = pred (fun t ->
+    болсын letter = pred (функ t ->
       (t <= 'Z' && t >= 'A') || (t <= 'z' && t >= 'a'))
 
-    let run (Parser(f)) input =
-      match f (0, List.ofSeq input) with
+    болсын run (Parser(f)) input =
+      сәйкестік f (0, List.ofSeq input) с
       | Some((i, _), res) when i = Seq.length input -> Some res
       | _ -> None
 
-module Evaluator =
-    open Parsec
+модуль Evaluator =
+    ашық Parsec
 
     // ----------------------------------------------------------------------------
     // DOMAIN MODEL
     // ----------------------------------------------------------------------------
 
-    type Position = char * int
+    түрі Position = char * int
 
-    type Expr =
-      | Reference of Position
-      | Number of int
-      | Binary of Expr * char * Expr
+    түрі Expr =
+      | Reference бастап Position
+      | Number бастап int
+      | Binary бастап Expr * char * Expr
 
     // ----------------------------------------------------------------------------
     // PARSER
     // ----------------------------------------------------------------------------
 
     // Basics: operators (+, -, *, /), cell reference (e.g. A10), number (e.g. 123)
-    let operator = char '+' <|> char '-' <|> char '*' <|> char '/'
-    let reference = letter <*> integer |> map Reference
-    let number = integer |> map Number
+    болсын operator = char '+' <|> char '-' <|> char '*' <|> char '/'
+    болсын reference = letter <*> integer |> map Reference
+    болсын number = integer |> map Number
 
-    // Nested operator uses need to be parethesized, for example (1 + (3 * 4)).
+    // Nested operator uses need to be parethesized, үшін example (1 + (3 * 4)).
     // <expr> is a binary operator without parentheses, number, reference or
     // nested brackets, while <term> is always bracketed or primitive. We need
     // to use `expr` recursively, which is handled via mutable slots.
-    let exprSetter, expr = slot ()
-    let brack = char '(' <*>> anySpace <*>> expr <<*> anySpace <<*> char ')'
-    let term = number <|> reference <|> brack
-    let binary = term <<*> anySpace <*> operator <<*> anySpace <*> term |> map (fun ((l,op), r) -> Binary(l, op, r))
-    let exprAux = binary <|> term
+    болсын exprSetter, expr = slot ()
+    болсын brack = char '(' <*>> anySpace <*>> expr <<*> anySpace <<*> char ')'
+    болсын term = number <|> reference <|> brack
+    болсын binary = term <<*> anySpace <*> operator <<*> anySpace <*> term |> map (функ ((l,op), r) -> Binary(l, op, r))
+    болсын exprAux = binary <|> term
     exprSetter.Set exprAux
 
-    // Formula starts with `=` followed by expression
-    // Equation you can write in a cell is either number or a formula
-    let formula = char '=' <*>> anySpace <*>> expr
-    let equation = anySpace <*>> (formula <|> number) <<*> anySpace
+    // Formula starts с `=` followed by expression
+    // Equation you can write ішінде a cell is either number or a formula
+    болсын formula = char '=' <*>> anySpace <*>> expr
+    болсын equation = anySpace <*>> (formula <|> number) <<*> anySpace
 
     // Run the parser on a given input
-    let parse input = run equation input
+    болсын parse input = run equation input
 
     // ----------------------------------------------------------------------------
     // EVALUATOR
     // ----------------------------------------------------------------------------
 
-    let rec evaluate visited (cells:Map<Position, string>) expr =
-      match expr with
+    болсын rec evaluate visited (cells:Map<Position, string>) expr =
+      сәйкестік expr с
       | Number num ->
           Some num
 
       | Binary(l, op, r) ->
-          let ops = dict [ '+', (+); '-', (-); '*', (*); '/', (/) ]
-          evaluate visited cells l |> Option.bind (fun l ->
-            evaluate visited cells r |> Option.map (fun r ->
+          болсын ops = dict [ '+', (+); '-', (-); '*', (*); '/', (/) ]
+          evaluate visited cells l |> Option.bind (функ l ->
+            evaluate visited cells r |> Option.map (функ r ->
               ops.[op] l r ))
 
       | Reference pos when Set.contains pos visited ->
           None
 
       | Reference pos ->
-          cells.TryFind pos |> Option.bind (fun value ->
-            parse value |> Option.bind (fun parsed ->
+          cells.TryFind pos |> Option.bind (функ value ->
+            parse value |> Option.bind (функ parsed ->
               evaluate (Set.add pos visited) cells parsed))
 
-open Elmish
-open Evaluator
+ашық Elmish
+ашық Evaluator
 
 // ----------------------------------------------------------------------------
 // DOMAIN MODEL
 // ----------------------------------------------------------------------------
 
-type Event =
-  | UpdateValue of Position * string
-  | StartEdit of Position
+түрі Event =
+  | UpdateValue бастап Position * string
+  | StartEdit бастап Position
 
-type State =
+түрі State =
   { Rows : int list
     Active : Position option
     Cols : char list
     Cells : Map<Position, string> }
 
-type Movement =
-    | MoveTo of Position
+түрі Movement =
+    | MoveTo бастап Position
     | Invalid
 
-type Direction = Up | Down | Left | Right
+түрі Direction = Up | Down | Left | Right
 
-let KeyDirection : Map<string, Direction> = Map.ofList [
+болсын KeyDirection : Map<string, Direction> = Map.ofList [
   ("ArrowLeft", Left)
   ("ArrowUp", Up)
   ("ArrowRight", Right)
@@ -358,87 +358,87 @@ let KeyDirection : Map<string, Direction> = Map.ofList [
 // EVENT HANDLING
 // ----------------------------------------------------------------------------
 
-let update msg state =
-  match msg with
+болсын update msg state =
+  сәйкестік msg с
   | StartEdit(pos) ->
-      { state with Active = Some pos }, []
+      { state с Active = Some pos }, []
 
   | UpdateValue(pos, value) ->
-      let newCells =
-          if value = ""
-              then Map.remove pos state.Cells
-              else Map.add pos value state.Cells
-      { state with Cells = newCells }, []
+      болсын newCells =
+          егер value = ""
+              содан Map.remove pos state.Cells
+              басқа Map.add pos value state.Cells
+      { state с Cells = newCells }, []
 
 // ----------------------------------------------------------------------------
 // RENDERING
 // ----------------------------------------------------------------------------
 
-let getDirection (ke: Browser.Types.KeyboardEvent) : Option<Direction> =
+болсын getDirection (ke: Browser.Types.KeyboardEvent) : Option<Direction> =
     Map.tryFind ke.key KeyDirection
 
-let getPosition ((col, row): Position) (direction: Direction) : Position =
-    match direction with
+болсын getPosition ((col, row): Position) (direction: Direction) : Position =
+    сәйкестік direction с
     | Up -> (col, row - 1)
     | Down -> (col, row + 1)
     | Left -> (char((int col) - 1), row)
     | Right -> (char((int col) + 1), row)
 
-let getMovement (state: State) (direction: Direction) : Movement =
-    match state.Active with
+болсын getMovement (state: State) (direction: Direction) : Movement =
+    сәйкестік state.Active с
     | None -> Invalid
     | (Some position) ->
-        let (col, row) = getPosition position direction
-        if List.contains col state.Cols && List.contains row state.Rows
-            then MoveTo (col, row)
-            else Invalid
+        болсын (col, row) = getPosition position direction
+        егер List.contains col state.Cols && List.contains row state.Rows
+            содан MoveTo (col, row)
+            басқа Invalid
 
-let getKeyPressEvent state trigger = fun (ke: Browser.Types.Event) ->
-    match getDirection (ke :?> _) with
+болсын getKeyPressEvent state trigger = функ (ke: Browser.Types.Event) ->
+    сәйкестік getDirection (ke :?> _) с
     | None -> ()
     | Some direction ->
-        match getMovement state direction with
+        сәйкестік getMovement state direction с
         | Invalid -> ()
         | MoveTo position -> trigger(StartEdit(position))
 
-let renderEditor (trigger:Event -> unit) pos state value =
+болсын renderEditor (trigger:Event -> unit) pos state value =
   h?td [ "class" => "selected" ] [
     h?input [
       "autofocus" => "true"
       "onkeydown" =!> (getKeyPressEvent state trigger)
-      "oninput" =!> (fun e -> trigger (UpdateValue (pos, (e.target :?> Browser.Types.HTMLInputElement).value)))
+      "oninput" =!> (функ e -> trigger (UpdateValue (pos, (e.target :?> Browser.Types.HTMLInputElement).value)))
       "value" => value ] []
   ]
 
-let renderView trigger pos (value:option<_>) =
+болсын renderView trigger pos (value:option<_>) =
   h?td
-    [ "style" => (if value.IsNone then "background:#ffb0b0" else "background:white")
-      "onclick" =!> (fun _ -> trigger(StartEdit(pos)) ) ]
+    [ "style" => (егер value.IsNone содан "background:#ffb0b0" басқа "background:white")
+      "onclick" =!> (функ _ -> trigger(StartEdit(pos)) ) ]
     [ Text (Option.defaultValue "#ERR" value) ]
 
-let renderCell trigger pos state =
-  let value = Map.tryFind pos state.Cells
-  if state.Active = Some pos then
+болсын renderCell trigger pos state =
+  болсын value = Map.tryFind pos state.Cells
+  егер state.Active = Some pos содан
     renderEditor trigger pos state (Option.defaultValue "" value)
-  else
-    let value =
-      match value with
+  басқа
+    болсын value =
+      сәйкестік value с
       | Some value ->
           parse value |> Option.bind (evaluate Set.empty state.Cells) |> Option.map string
       | _ -> Some ""
     renderView trigger pos value
 
-let view state trigger =
-  let empty = h?td [] []
-  let header htext = h?th [] [Text htext]
-  let headers = state.Cols |> List.map (fun h -> header (string h))
-  let headers = empty::headers
+болсын view state trigger =
+  болсын empty = h?td [] []
+  болсын header htext = h?th [] [Text htext]
+  болсын headers = state.Cols |> List.map (функ h -> header (string h))
+  болсын headers = empty::headers
 
-  let row cells = h?tr [] cells
-  let cells n =
-    let cells = state.Cols |> List.map (fun h -> renderCell trigger (h, n) state)
+  болсын row cells = h?tr [] cells
+  болсын cells n =
+    болсын cells = state.Cols |> List.map (функ h -> renderCell trigger (h, n) state)
     header (string n) :: cells
-  let rows = state.Rows |> List.map (fun r -> h?tr [] (cells r))
+  болсын rows = state.Rows |> List.map (функ r -> h?tr [] (cells r))
 
   h?table [] [
     h?tr [] headers
@@ -449,7 +449,7 @@ let view state trigger =
 // ENTRY POINT
 // ----------------------------------------------------------------------------
 
-let initial () =
+болсын initial () =
   { Cols = ['A' .. 'K']
     Rows = [1 .. 15]
     Active = None

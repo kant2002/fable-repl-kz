@@ -1,11 +1,11 @@
 // More info about Fulma at https://mangelmaxime.github.io/Fulma/
-module Fulma.Panel
+модуль Fulma.Panel
 
-open Fable.React
-open Fable.React.Props
-open Fulma
+ашық Fable.React
+ашық Fable.React.Props
+ашық Fulma
 
-let iconInteractive () =
+болсын iconInteractive () =
     Columns.columns [ ]
         [ Column.column [ Column.Offset (Screen.All, Column.Is3)
                           Column.Width (Screen.All, Column.Is6) ]

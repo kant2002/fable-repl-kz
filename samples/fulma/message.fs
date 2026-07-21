@@ -1,13 +1,13 @@
 // More info about Fulma at https://mangelmaxime.github.io/Fulma/
-module Fulma.Message
+модуль Fulma.Message
 
-open Fable.React
-open Fulma
+ашық Fable.React
+ашық Fulma
 
-let loremText =
-    "Donec fermentum interdum elit, in congue justo maximus congue. Mauris tincidunt ultricies lacus, vel pulvinar diam luctus et. In vel tellus vitae dolor efficitur pulvinar eu non tortor. Nunc eget augue id nisl bibendum congue vitae vitae purus. Phasellus pharetra nunc at justo dictum rutrum. Nullam diam diam, tincidunt id interdum a, rutrum ac lorem."
+болсын loremText =
+    "Donec fermentum interdum elit, ішінде congue justo maximus congue. Mauris tincidunt ultricies lacus, vel pulvinar diam luctus et. In vel tellus vitae dolor efficitur pulvinar eu non tortor. Nunc eget augue id nisl bibendum congue vitae vitae purus. Phasellus pharetra nunc at justo dictum rutrum. Nullam diam diam, tincidunt id interdum a, rutrum ac lorem."
 
-let basic () =
+болсын basic () =
     Message.message [ ]
         [ Message.header [ ]
             [ str "Nunc finibus ligula et semper suscipit"
@@ -16,7 +16,7 @@ let basic () =
           Message.body [ ]
             [ str loremText ] ]
 
-let color () =
+болсын color () =
     div [ ]
         [ Message.message [ Message.Color IsInfo ]
             [ Message.header [ ]
@@ -33,7 +33,7 @@ let color () =
               Message.body [ ]
                 [ str loremText ] ] ]
 
-let sizes () =
+болсын sizes () =
     Message.message [ Message.Size IsSmall ]
         [ Message.header [ ]
             [ str "Nunc finibus ligula et semper suscipit"
@@ -42,7 +42,7 @@ let sizes () =
           Message.body [ ]
             [ str loremText ] ]
 
-let bodyOnly () =
+болсын bodyOnly () =
     Message.message [ ]
         [ Message.body [ ]
             [ str loremText ] ]

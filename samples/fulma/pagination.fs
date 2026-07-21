@@ -1,10 +1,10 @@
 // More info about Fulma at https://mangelmaxime.github.io/Fulma/
-module Fulma.Pagination
+модуль Fulma.Pagination
 
-open Fable.React
-open Fulma
+ашық Fable.React
+ашық Fulma
 
-let basic () =
+болсын basic () =
     Pagination.pagination [ ]
         [ Pagination.previous [ ]
             [ str "Previous" ]
@@ -24,7 +24,7 @@ let basic () =
               Pagination.link [ ]
                 [ str "77" ] ] ]
 
-let aligment () =
+болсын aligment () =
     Pagination.pagination [ Pagination.IsCentered ]
         [ Pagination.previous [ ]
             [ str "Previous" ]
@@ -44,7 +44,7 @@ let aligment () =
               Pagination.link [ ]
                 [ str "77" ] ] ]
 
-let size () =
+болсын size () =
     Pagination.pagination [  Pagination.Size IsSmall]
         [ Pagination.previous [ ]
             [ str "Previous" ]

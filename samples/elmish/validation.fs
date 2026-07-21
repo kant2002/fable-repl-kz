@@ -1,34 +1,34 @@
-module Elmish.Validation
+модуль Elmish.Validation
 
- // Form Validation in Elmish, by Zaid Ajaj
+ // Form Validation ішінде Elmish, by Zaid Ajaj
 
-open System
-open Fable.Core
-open Browser.Types
-open Elmish
-open Elmish.React
-open Fable.React
-open Fable.React.Props
+ашық System
+ашық Fable.Core
+ашық Browser.Types
+ашық Elmish
+ашық Elmish.React
+ашық Fable.React
+ашық Fable.React.Props
 
-type LoginResult =
-    | Success of token:string
+түрі LoginResult =
+    | Success бастап token:string
     | UsernameDoesNotExist
     | PasswordIncorrect
-    | LoginError of errorMsg:string
+    | LoginError бастап errorMsg:string
 
-type LoginInfo =
+түрі LoginInfo =
     { Username : string
       Password : string }
 
-type Msg =
+түрі Msg =
     | Login
-    | ChangeUsername of string
-    | ChangePassword of string
-    | LoginSuccess of adminSecureToken: string
-    | LoginFailed of error:string
+    | ChangeUsername бастап string
+    | ChangePassword бастап string
+    | LoginSuccess бастап adminSecureToken: string
+    | LoginFailed бастап error:string
     | UpdateValidationErrors
 
-type State = {
+түрі State = {
     LoggingIn: bool
     InputUsername: string
     UsernameValidationErrors: string list
@@ -39,17 +39,17 @@ type State = {
 }
 
 
-module Http =
-    let private loginAsync (info: LoginInfo) =
+модуль Http =
+    болсын жеке loginAsync (info: LoginInfo) =
         async {
             // simulate server word
             do! Async.Sleep 1500
             return LoginResult.Success "my-secure-access-token"
         }
 
-    let login (info: LoginInfo) =
+    болсын login (info: LoginInfo) =
 
-        let successHandler = function
+        болсын successHandler = функция
             | Success token -> LoginSuccess token
             | UsernameDoesNotExist -> LoginFailed "Username does not exist"
             | PasswordIncorrect -> LoginFailed "The password you entered is incorrect"
@@ -57,10 +57,10 @@ module Http =
 
         Cmd.OfAsync.either loginAsync info
             successHandler
-            (fun ex -> LoginFailed "Unknown error occured while logging you in")
+            (функ ex -> LoginFailed "Unknown error occured while logging you ішінде")
 
 
-let init() =
+болсын init() =
     { InputUsername = ""
       InputPassword = ""
       UsernameValidationErrors =  [ ]
@@ -70,18 +70,18 @@ let init() =
       LoggingIn = false }, Cmd.none
 
 
-let validateInput (state: State) =
-  let usernameRules =
+болсын validateInput (state: State) =
+  болсын usernameRules =
     [ String.IsNullOrWhiteSpace(state.InputUsername), "Field 'Username' cannot be empty"
       state.InputUsername.Trim().Length < 5, "Field 'Username' must at least have 5 characters" ]
-  let passwordRules =
+  болсын passwordRules =
     [ String.IsNullOrWhiteSpace(state.InputPassword), "Field 'Password' cannot be empty"
       state.InputPassword.Trim().Length < 5, "Field 'Password' must at least have 5 characters" ]
-  let usernameValidationErrors =
+  болсын usernameValidationErrors =
       usernameRules
       |> List.filter fst
       |> List.map snd
-  let passwordValidationErrors =
+  болсын passwordValidationErrors =
       passwordRules
       |> List.filter fst
       |> List.map snd
@@ -89,35 +89,35 @@ let validateInput (state: State) =
   usernameValidationErrors, passwordValidationErrors
 
 
-let update msg (state: State) =
-    match msg with
+болсын update msg (state: State) =
+    сәйкестік msg с
     | ChangeUsername name ->
-        let nextState = { state with InputUsername = name }
+        болсын nextState = { state с InputUsername = name }
         nextState, Cmd.ofMsg UpdateValidationErrors
 
     | ChangePassword pass ->
-        let nextState = { state with InputPassword = pass }
+        болсын nextState = { state с InputPassword = pass }
         nextState, Cmd.ofMsg UpdateValidationErrors
 
     | UpdateValidationErrors ->
-        let usernameErrors, passwordErrors = validateInput state
-        let nextState =
-            { state with UsernameValidationErrors = usernameErrors
+        болсын usernameErrors, passwordErrors = validateInput state
+        болсын nextState =
+            { state с UsernameValidationErrors = usernameErrors
                          PasswordValidationErrors = passwordErrors }
         nextState, Cmd.none
 
     | Login ->
-        let state = { state with HasTriedToLogin = true }
-        let usernameErrors, passwordErrors =
+        болсын state = { state с HasTriedToLogin = true }
+        болсын usernameErrors, passwordErrors =
            validateInput state
-        let startLogin =
+        болсын startLogin =
             List.isEmpty usernameErrors
          && List.isEmpty passwordErrors
 
-        if not startLogin then state, Cmd.none
-        else
-          let nextState = { state with LoggingIn = true }
-          let credentials = {
+        егер not startLogin содан state, Cmd.none
+        басқа
+          болсын nextState = { state с LoggingIn = true }
+          болсын credentials = {
               Username = state.InputUsername
               Password = state.InputPassword
           }
@@ -125,21 +125,21 @@ let update msg (state: State) =
           nextState, Http.login credentials
 
     | LoginSuccess token ->
-        let nextState = { state with LoggingIn = false }
+        болсын nextState = { state с LoggingIn = false }
         nextState, Cmd.none
 
     | LoginFailed error ->
-        let nextState =
-            { state with
+        болсын nextState =
+            { state с
                 LoginError = Some error
                 LoggingIn = false }
 
         nextState, Cmd.none
 
-type InputType = Text | Password
+түрі InputType = Text | Password
 
-let textInput inputLabel initial inputType (onChange: string -> unit) =
-  let inputType = match inputType with
+болсын textInput inputLabel initial inputType (onChange: string -> unit) =
+  болсын inputType = сәйкестік inputType с
                   | Text -> "input"
                   | Password -> "password"
   div
@@ -148,49 +148,49 @@ let textInput inputLabel initial inputType (onChange: string -> unit) =
               Type inputType
               DefaultValue initial
               Placeholder inputLabel
-              OnChange (fun e ->
-                let el = e.target :?> HTMLInputElement
+              OnChange (функ e ->
+                болсын el = e.target :?> HTMLInputElement
                 onChange el.value) ] ]
 
-let loginFormStyle =
+болсын loginFormStyle =
   Style [ Width "400px"
           MarginTop "70px"
           TextAlign TextAlignOptions.Center ]
 
-let cardBlockStyle =
+болсын cardBlockStyle =
   Style [ Padding "30px"
           TextAlign TextAlignOptions.Left
           BorderRadius 10 ]
 
-let errorMessagesIfAny triedLogin = function
+болсын errorMessagesIfAny triedLogin = функция
   | [ ] -> None
   | _ when triedLogin = false -> None
   | errors ->
-    let errorStyle = Style [ Color "crimson"; FontSize 12 ]
+    болсын errorStyle = Style [ Color "crimson"; FontSize 12 ]
     ul [ ]
-       [ for error in errors ->
+       [ үшін error ішінде errors ->
           li [ errorStyle ] [ str error ] ] |> Some
 
-let appIcon =
+болсын appIcon =
   img [ Src "https://zaid-ajaj.github.io/elmish-login-flow-validation/img/fable_logo.png"
         Style [ Height 80; Width 100 ] ]
 
-let render (state: State) dispatch =
+болсын render (state: State) dispatch =
 
-    let loginBtnContent =
-      if state.LoggingIn then i [ Class "fas fa-circle-notch fa-spin" ] []
-      else str "Login"
+    болсын loginBtnContent =
+      егер state.LoggingIn содан i [ Class "fas fa-circle-notch fa-spin" ] []
+      басқа str "Login"
 
-    let validationRules =
+    болсын validationRules =
       [ state.InputUsername.Trim().Length >= 5
         state.InputPassword.Trim().Length >= 5 ]
 
-    let canLogin = Seq.forall id validationRules
+    болсын canLogin = Seq.forall id validationRules
 
-    let btnClass =
-      if canLogin
-      then "btn btn-success btn-lg"
-      else "btn btn-info btn-lg"
+    болсын btnClass =
+      егер canLogin
+      содан "btn btn-success btn-lg"
+      басқа "btn btn-info btn-lg"
     div
       [ Class "container" ; loginFormStyle ]
       [ div
@@ -209,7 +209,7 @@ let render (state: State) dispatch =
                 [ Style [ TextAlign TextAlignOptions.Center ] ]
                 [ button
                     [ Class btnClass
-                      OnClick (fun e -> dispatch Login) ]
+                      OnClick (функ e -> dispatch Login) ]
                     [ loginBtnContent ] ] ] ] ]
 
 

@@ -1,10 +1,10 @@
 // More info about Fulma at https://mangelmaxime.github.io/Fulma/
-module Fulma.Section
+модуль Fulma.Section
 
-open Fable.React
-open Fulma
+ашық Fable.React
+ашық Fulma
 
-let basic () =
+болсын basic () =
     Section.section [ ]
         [ Container.container [ Container.IsFluid ]
             [ Heading.h1 [ ]

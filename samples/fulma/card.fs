@@ -1,13 +1,13 @@
 // More info about Fulma at https://mangelmaxime.github.io/Fulma/
-module Fulma.Card
+модуль Fulma.Card
 
-open Fable.Core
-open Fable.Core.JsInterop
-open Fable.React
-open Fable.React.Props
-open Fulma
+ашық Fable.Core
+ашық Fable.Core.JsInterop
+ашық Fable.React
+ашық Fable.React.Props
+ашық Fulma
 
-let basic () =
+болсын basic () =
     Card.card [ ]
         [ Card.header [ ]
             [ Card.Header.title [ ]
@@ -25,7 +25,7 @@ let basic () =
               Card.Footer.div [ ]
                 [ str "Delete" ] ] ]
 
-let centered () =
+болсын centered () =
     Card.card [ ]
         [ Card.header [ ]
             [ Card.Header.title [ Card.Header.Title.IsCentered ]

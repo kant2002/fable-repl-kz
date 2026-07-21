@@ -1,59 +1,59 @@
-module Tour.Functions
+модуль Tour.Functions
 
 // From https://docs.microsoft.com/en-us/dotnet/fsharp/tour
-// Visit the link above for more information on each topic
+// Visit the link above үшін more information on each topic
 // You can also find more learning resources at https://fsharp.org/
 
-module НегізгіФункциялар =
+модуль НегізгіФункциялар =
 
-    /// You use 'let' to define a function. This one accepts an integer argument and returns an integer.
-    /// Parentheses are optional for function arguments, except for when you use an explicit type annotation.
-    let үлгіФункция1 x = x*x + 3
+    /// You use 'болсын' to define a функция. This one accepts an integer argument and returns an integer.
+    /// Parentheses are optional үшін функция arguments, except үшін when you use an explicit түрі annotation.
+    болсын үлгіФункция1 x = x*x + 3
 
-    /// Apply the function, naming the function return result using 'let'.
-    /// The variable type is inferred from the function return type.
-    let нәтиже1 = үлгіФункция1 4573
+    /// Apply the функция, naming the функция return result using 'болсын'.
+    /// The variable түрі is inferred from the функция return түрі.
+    болсын нәтиже1 = үлгіФункция1 4573
 
-    // This line uses '%d' to print the result as an integer. This is type-safe.
-    // If 'нәтиже1' were not of type 'int', then the line would fail to compile.
+    // This line uses '%d' to print the result as an integer. This is түрі-safe.
+    // If 'нәтиже1' were not бастап түрі 'int', содан the line would fail to compile.
     printfn "4573 бүтін санын квадраттап, 3-ті қосқанда %d шығады" нәтиже1
 
-    /// When needed, annotate the type of a parameter name using '(argument:type)'.  Parentheses are required.
-    let үлгіФункция2 (x:int) = 2*x*x - x/5 + 3
+    /// When needed, annotate the түрі бастап a parameter name using '(argument:түрі)'.  Parentheses are required.
+    болсын үлгіФункция2 (x:int) = 2*x*x - x/5 + 3
 
-    let нәтиже2 = үлгіФункция2 (7 + 4)
+    болсын нәтиже2 = үлгіФункция2 (7 + 4)
     printfn "(7 + 4) 2 таңдау функциясын қолдану нәтижесі %d болады" нәтиже2
 
-    /// Conditionals use if/then/elif/else.
+    /// Conditionals use егер/содан/басегер/басқа.
     ///
     /// Note that F# uses white space indentation-aware syntax, similar to languages like Python.
-    let үлгіФункци3 x =
-        if x < 100.0 then
+    болсын үлгіФункци3 x =
+        егер x < 100.0 содан
             2.0*x*x - x/5.0 + 3.0
-        else
+        басқа
             2.0*x*x + x/5.0 - 37.0
 
-    let нәтиже3 = үлгіФункци3 (6.5 + 4.5)
+    болсын нәтиже3 = үлгіФункци3 (6.5 + 4.5)
 
-    // This line uses '%f' to print the result as a float.  As with '%d' above, this is type-safe.
-    printfn "The result of applying the 3rd sample function to (6.5 + 4.5) is %f" нәтиже3
+    // This line uses '%f' to print the result as a float.  As с '%d' above, this is түрі-safe.
+    printfn "The result бастап applying the 3rd sample функция to (6.5 + 4.5) is %f" нәтиже3
 
 
-module Immutability =
+модуль Immutability =
 
-    /// Binding a value to a name via 'let' makes it immutable.
+    /// Binding a value to a name via 'болсын' makes it immutable.
     ///
-    /// The second line of code fails to compile because 'number' is immutable and bound.
-    /// Re-defining 'number' to be a different value is not allowed in F#.
-    let number = 2
-    // let number = 3
+    /// The second line бастап code fails to compile because 'number' is immutable and bound.
+    /// Re-defining 'number' to be a different value is not allowed ішінде F#.
+    болсын number = 2
+    // болсын number = 3
 
-    /// A mutable binding.  This is required to be able to mutate the value of 'otherNumber'.
-    let mutable otherNumber = 2
+    /// A mutable binding.  This is required to be able to mutate the value бастап 'otherNumber'.
+    болсын mutable otherNumber = 2
 
     printfn "'otherNumber' is %d" otherNumber
 
-    // When mutating a value, use '<-' to assign a new value.
+    // When mutating a value, use '<-' to assign a жаңа value.
     //
     // Note that '=' is not the same as '<-'.  '=' is used to test equality.
     otherNumber <- otherNumber + 1
@@ -61,44 +61,44 @@ module Immutability =
     printfn "'otherNumber' changed to be %d" otherNumber
 
 
-module PipelinesAndComposition =
+модуль PipelinesAndComposition =
 
     /// Squares a value.
-    let square x = x * x
+    болсын square x = x * x
 
     /// Adds 1 to a value.
-    let addOne x = x + 1
+    болсын addOne x = x + 1
 
-    /// Tests if an integer value is odd via modulo.
-    let isOdd x = x % 2 <> 0
+    /// Tests егер an integer value is odd via modulo.
+    болсын isOdd x = x % 2 <> 0
 
-    /// A list of 5 numbers.  More on lists later.
-    let numbers = [ 1; 2; 3; 4; 5 ]
+    /// A list бастап 5 numbers.  More on lists later.
+    болсын numbers = [ 1; 2; 3; 4; 5 ]
 
-    /// Given a list of integers, it filters out the even numbers,
+    /// Given a list бастап integers, it filters out the even numbers,
     /// squares the resulting odds, and adds 1 to the squared odds.
-    let squareOddValuesAndAddOne values =
-        let odds = List.filter isOdd values
-        let squares = List.map square odds
-        let result = List.map addOne squares
+    болсын squareOddValuesAndAddOne values =
+        болсын odds = List.filter isOdd values
+        болсын squares = List.map square odds
+        болсын result = List.map addOne squares
         result
 
     printfn "processing %A through 'squareOddValuesAndAddOne' produces: %A" numbers (squareOddValuesAndAddOne numbers)
 
     /// A shorter way to write 'squareOddValuesAndAddOne' is to nest each
-    /// sub-result into the function calls themselves.
+    /// sub-result into the функция calls themselves.
     ///
-    /// This makes the function much shorter, but it's difficult to see the
-    /// order in which the data is processed.
-    let squareOddValuesAndAddOneNested values =
+    /// This makes the функция much shorter, but it's difficult to see the
+    /// order ішінде which the data is processed.
+    болсын squareOddValuesAndAddOneNested values =
         List.map addOne (List.map square (List.filter isOdd values))
 
     printfn "processing %A through 'squareOddValuesAndAddOneNested' produces: %A" numbers (squareOddValuesAndAddOneNested numbers)
 
     /// A preferred way to write 'squareOddValuesAndAddOne' is to use F# pipe operators.
     /// This allows you to avoid creating intermediate results, but is much more readable
-    /// than nesting function calls like 'squareOddValuesAndAddOneNested'
-    let squareOddValuesAndAddOnePipeline values =
+    /// than nesting функция calls like 'squareOddValuesAndAddOneNested'
+    болсын squareOddValuesAndAddOnePipeline values =
         values
         |> List.filter isOdd
         |> List.map square
@@ -109,55 +109,53 @@ module PipelinesAndComposition =
     /// You can shorten 'squareOddValuesAndAddOnePipeline' by moving the second `List.map` call
     /// into the first, using a Lambda Function.
     ///
-    /// Note that pipelines are also being used inside the lambda function.  F# pipe operators
-    /// can be used for single values as well.  This makes them very powerful for processing data.
-    let squareOddValuesAndAddOneShorterPipeline values =
+    /// Note that pipelines are also being used inside the lambda функция.  F# pipe operators
+    /// can be used үшін single values as well.  This makes them very powerful үшін processing data.
+    болсын squareOddValuesAndAddOneShorterPipeline values =
         values
         |> List.filter isOdd
-        |> List.map(fun x -> x |> square |> addOne)
+        |> List.map(функ x -> x |> square |> addOne)
 
     printfn "processing %A through 'squareOddValuesAndAddOneShorterPipeline' produces: %A" numbers (squareOddValuesAndAddOneShorterPipeline numbers)
 
 
-module RecursiveFunctions =
+модуль RecursiveFunctions =
 
-    /// This example shows a recursive function that computes the factorial of an
-    /// integer. It uses 'let rec' to define a recursive function.
-    let rec factorial n =
-        if n = 0 then 1 else n * factorial (n-1)
+    /// This example shows a recursive функция that computes the factorial бастап an
+    /// integer. It uses 'болсын rec' to define a recursive функция.
+    болсын rec factorial n =
+        егер n = 0 содан 1 басқа n * factorial (n-1)
 
-    printfn "Factorial of 6 is: %d" (factorial 6)
+    printfn "Factorial бастап 6 is: %d" (factorial 6)
 
-    /// Computes the greatest common factor of two integers.
+    /// Computes the greatest common factor бастап two integers.
     ///
-    /// Since all of the recursive calls are tail calls,
-    /// the compiler will turn the function into a loop,
+    /// Since all бастап the recursive calls are tail calls,
+    /// the compiler will turn the функция into a loop,
     /// which improves performance and reduces memory consumption.
-    let rec greatestCommonFactor a b =
-        if a = 0 then b
-        elif a < b then greatestCommonFactor a (b - a)
-        else greatestCommonFactor (a - b) b
+    болсын rec greatestCommonFactor a b =
+        егер a = 0 содан b
+        басегер a < b содан greatestCommonFactor a (b - a)
+        басқа greatestCommonFactor (a - b) b
 
-    printfn "The Greatest Common Factor of 300 and 620 is %d" (greatestCommonFactor 300 620)
+    printfn "The Greatest Common Factor бастап 300 and 620 is %d" (greatestCommonFactor 300 620)
 
-    /// This example computes the sum of a list of integers using recursion.
-    let rec sumList xs =
-        match xs with
+    /// This example computes the sum бастап a list бастап integers using recursion.
+    болсын rec sumList xs =
+        сәйкестік xs с
         | []    -> 0
         | y::ys -> y + sumList ys
 
-    /// This makes 'sumList' tail recursive, using a helper function with a result accumulator.
-    let rec private sumListTailRecHelper accumulator xs =
-        match xs with
+    /// This makes 'sumList' tail recursive, using a helper функция с a result accumulator.
+    болсын rec жеке sumListTailRecHelper accumulator xs =
+        сәйкестік xs с
         | []    -> accumulator
         | y::ys -> sumListTailRecHelper (accumulator+y) ys
 
-    /// This invokes the tail recursive helper function, providing '0' as a seed accumulator.
-    /// An approach like this is common in F#.
-    let sumListTailRecursive xs = sumListTailRecHelper 0 xs
+    /// This invokes the tail recursive helper функция, providing '0' as a seed accumulator.
+    /// An approach like this is common ішінде F#.
+    болсын sumListTailRecursive xs = sumListTailRecHelper 0 xs
 
-    let oneThroughTen = [1; 2; 3; 4; 5; 6; 7; 8; 9; 10]
+    болсын oneThroughTen = [1; 2; 3; 4; 5; 6; 7; 8; 9; 10]
 
     printfn "The sum 1-10 is %d" (sumListTailRecursive oneThroughTen)
-
-

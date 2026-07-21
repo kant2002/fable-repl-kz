@@ -1,11 +1,11 @@
 // More info about Fulma at https://mangelmaxime.github.io/Fulma/
-module Fulma.Tag
+модуль Fulma.Tag
 
-open Fable.React
-open Fable.React.Props
-open Fulma
+ашық Fable.React
+ашық Fable.React.Props
+ашық Fulma
 
-let colorInteractive () =
+болсын colorInteractive () =
     div [ Class "block" ]
         [ Tag.tag [ ] [ str "Default" ]
           Tag.tag [ Tag.Color IsWhite ] [ str "White" ]
@@ -18,13 +18,13 @@ let colorInteractive () =
           Tag.tag [ Tag.Color IsWarning ] [ str "Warning" ]
           Tag.tag [ Tag.Color IsDanger ] [ str "Danger" ] ]
 
-let sizeInteractive () =
+болсын sizeInteractive () =
     div [ Class "block" ]
         [ Tag.tag [ ] [ str "Normal" ]
           Tag.tag [ Tag.Color IsPrimary; Tag.Size IsMedium ] [ str "Medium" ]
           Tag.tag [ Tag.Color IsInfo; Tag.Size IsLarge ] [ str "Large" ] ]
 
-let nestedDeleteStyleInteractive () =
+болсын nestedDeleteStyleInteractive () =
     div [ Class "block" ]
         [ Tag.tag [ Tag.Color IsDark ]
             [ str "With delete"
@@ -36,7 +36,7 @@ let nestedDeleteStyleInteractive () =
             [ str "With delete"
               Delete.delete [ Delete.Size IsLarge ] [ ] ] ]
 
-let list () =
+болсын list () =
     Tag.list [ Tag.List.HasAddons ]
         [ Tag.tag [ Tag.Color IsDanger ] [ str "Maxime Mangel" ]
           Tag.delete [ ] [ ] ]

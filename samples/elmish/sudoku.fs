@@ -1,73 +1,73 @@
-module Sudoku
+модуль Sudoku
 
-open System.Collections.Generic
-open Fable.React
-open Fable.React.Props
-open Elmish
-open Elmish.React
+ашық System.Collections.Generic
+ашық Fable.React
+ашық Fable.React.Props
+ашық Elmish
+ашық Elmish.React
 
-type Box = int
-type Sudoku = Box array array
+түрі Box = int
+түрі Sudoku = Box array array
 
-let rows = id
-let cols (sudoku:Sudoku) =
+болсын rows = id
+болсын cols (sudoku:Sudoku) =
     sudoku
-    |> Array.mapi (fun a row -> row |> Array.mapi (fun b cell -> sudoku.[b].[a]))
+    |> Array.mapi (функ a row -> row |> Array.mapi (функ b cell -> sudoku.[b].[a]))
 
-let getBoxIndex count row col =
-   let n = row/count
-   let m = col/count
+болсын getBoxIndex count row col =
+   болсын n = row/count
+   болсын m = col/count
    n * count + m
 
-let boxes (sudoku:Sudoku) =
-    let l = sudoku |> Array.length
-    let d = float l |> System.Math.Sqrt |> int
-    let list = new List<_>()
-    for a in 0..l - 1 do
-        list.Add(new List<_>())
+болсын boxes (sudoku:Sudoku) =
+    болсын l = sudoku |> Array.length
+    болсын d = float l |> System.Math.Sqrt |> int
+    болсын list = жаңа List<_>()
+    үшін a ішінде 0..l - 1 жасау
+        list.Add(жаңа List<_>())
 
-    for a in 0..(l - 1) do
-        for b in 0..(l - 1) do
+    үшін a ішінде 0..(l - 1) жасау
+        үшін b ішінде 0..(l - 1) жасау
             list.[getBoxIndex d a b].Add(sudoku.[a].[b])
 
     list
       |> Seq.map Seq.toArray
 
-let toSudoku x : Sudoku =
+болсын toSudoku x : Sudoku =
     x
     |> Seq.map Seq.toArray
     |> Seq.toArray
 
-let allUnique numbers =
-    let set = new HashSet<_>()
+болсын allUnique numbers =
+    болсын set = жаңа HashSet<_>()
     numbers
     |> Seq.filter ((<>) 0)
     |> Seq.forall set.Add
 
-let solvable sudoku =
+болсын solvable sudoku =
     rows sudoku
     |> Seq.append (cols sudoku)
     |> Seq.append (boxes sudoku)
     |> Seq.forall allUnique
 
-let replaceAtPos (x:Sudoku) row col newValue :Sudoku =
-    [| for a in 0..(Array.length x - 1) ->
-        [| for b in 0..(Array.length x - 1) ->
-            if a = row && b = col then newValue else x.[a].[b] |] |]
+болсын replaceAtPos (x:Sudoku) row col newValue :Sudoku =
+    [| үшін a ішінде 0..(Array.length x - 1) ->
+        [| үшін b ішінде 0..(Array.length x - 1) ->
+            егер a = row && b = col содан newValue басқа x.[a].[b] |] |]
 
-let rec substitute row col (x:Sudoku) =
-    let a,b = if col >= Array.length x then row+1,0 else row,col
-    if a >= Array.length x then seq { yield x } else
-    if x.[a].[b] = 0 then
+болсын rec substitute row col (x:Sudoku) =
+    болсын a,b = егер col >= Array.length x содан row+1,0 басқа row,col
+    егер a >= Array.length x содан seq { yield x } басқа
+    егер x.[a].[b] = 0 содан
         [1..Array.length x]
             |> Seq.map (replaceAtPos x a b)
             |> Seq.filter solvable
             |> Seq.collect (substitute a (b+1))
-     else substitute a (b+1) x
+     басқа substitute a (b+1) x
 
-let getFirstSolution = substitute 0 0 >> Seq.head
+болсын getFirstSolution = substitute 0 0 >> Seq.head
 
-let puzzle =
+болсын puzzle =
     [[0; 0; 8;  3; 0; 0;  6; 0; 0]
      [0; 0; 4;  0; 0; 0;  0; 1; 0]
      [6; 7; 0;  0; 8; 0;  0; 0; 0]
@@ -81,44 +81,44 @@ let puzzle =
      [0; 5; 0;  0; 0; 0;  0; 7; 4]]
     |> toSudoku
 
-let init() = puzzle
+болсын init() = puzzle
 
-type Model = Sudoku
+түрі Model = Sudoku
 
-type Msg =
+түрі Msg =
 | Reset
 | Solve
 
-let update (msg:Msg) (model:Model) =
-    match msg with
+болсын update (msg:Msg) (model:Model) =
+    сәйкестік msg с
     | Reset -> puzzle
     | Solve -> getFirstSolution model
 
-let tableRow xs = tr [] [ for x in xs -> td [] [x] ]
+болсын tableRow xs = tr [] [ үшін x ішінде xs -> td [] [x] ]
 
 
-let view (model:Model) dispatch =
+болсын view (model:Model) dispatch =
     div
       []
       [ div
           [ Class "calc" ]
           [ table []
-                [ for row in model ->
+                [ үшін row ішінде model ->
                     tableRow [
-                        for n in row ->
+                        үшін n ішінде row ->
                             div [ Class "digit" ] [
-                                str (if n = 0 then "" else string n) ] ] ]
+                                str (егер n = 0 содан "" басқа string n) ] ] ]
           ]
         br []
         div
           [ Class "controls" ]
           [ div
               [ Class "op-button"
-                OnClick (fun _ -> dispatch Reset) ]
+                OnClick (функ _ -> dispatch Reset) ]
               [ str "Reset" ]
             div
               [ Class "op-button"
-                OnClick (fun _ -> dispatch Solve) ]
+                OnClick (функ _ -> dispatch Solve) ]
               [ str "Solve" ]]]
 
 // App

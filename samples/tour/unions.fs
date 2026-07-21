@@ -1,144 +1,144 @@
-module Tour.Unions
+модуль Tour.Unions
 
 // From https://docs.microsoft.com/en-us/dotnet/fsharp/tour
-// Visit the link above for more information on each topic
+// Visit the link above үшін more information on each topic
 // You can also find more learning resources at https://fsharp.org/
 
-module DiscriminatedUnions =
+модуль DiscriminatedUnions =
 
-    /// The following represents the suit of a playing card.
-    type Suit =
+    /// The following represents the suit бастап a playing card.
+    түрі Suit =
         | Hearts
         | Clubs
         | Diamonds
         | Spades
 
-    /// A Discriminated Union can also be used to represent the rank of a playing card.
-    type Rank =
-        /// Represents the rank of cards 2 .. 10
-        | Value of int
+    /// A Discriminated Union can also be used to represent the rank бастап a playing card.
+    түрі Rank =
+        /// Represents the rank бастап cards 2 .. 10
+        | Value бастап int
         | Ace
         | King
         | Queen
         | Jack
 
         /// Discriminated Unions can also implement object-oriented members.
-        static member GetAllRanks() =
+        статикалық мүшесі GetAllRanks() =
             [ yield Ace
-              for i in 2 .. 10 do yield Value i
+              үшін i ішінде 2 .. 10 жасау yield Value i
               yield Jack
               yield Queen
               yield King ]
 
-    /// This is a record type that combines a Suit and a Rank.
+    /// This is a record түрі that combines a Suit and a Rank.
     /// It's common to use both Records and Discriminated Unions when representing data.
-    type Card = { Suit: Suit; Rank: Rank }
+    түрі Card = { Suit: Suit; Rank: Rank }
 
-    /// This computes a list representing all the cards in the deck.
-    let fullDeck =
-        [ for suit in [ Hearts; Diamonds; Clubs; Spades] do
-              for rank in Rank.GetAllRanks() do
+    /// This computes a list representing all the cards ішінде the deck.
+    болсын fullDeck =
+        [ үшін suit ішінде [ Hearts; Diamonds; Clubs; Spades] жасау
+              үшін rank ішінде Rank.GetAllRanks() жасау
                   yield { Suit=suit; Rank=rank } ]
 
     /// This example converts a 'Card' object to a string.
-    let showPlayingCard (c: Card) =
-        let rankString =
-            match c.Rank with
+    болсын showPlayingCard (c: Card) =
+        болсын rankString =
+            сәйкестік c.Rank с
             | Ace -> "Ace"
             | King -> "King"
             | Queen -> "Queen"
             | Jack -> "Jack"
             | Value n -> string n
-        let suitString =
-            match c.Suit with
+        болсын suitString =
+            сәйкестік c.Suit с
             | Clubs -> "clubs"
             | Diamonds -> "diamonds"
             | Spades -> "spades"
             | Hearts -> "hearts"
-        rankString  + " of " + suitString
+        rankString  + " бастап " + suitString
 
-    /// This example prints all the cards in a playing deck.
-    let printAllCards() =
-        for card in fullDeck do
+    /// This example prints all the cards ішінде a playing deck.
+    болсын printAllCards() =
+        үшін card ішінде fullDeck жасау
             printfn "%s" (showPlayingCard card)
 
 
-    // Single-case DUs are often used for domain modeling.  This can buy you extra type safety
+    // Single-case DUs are often used үшін domain modeling.  This can buy you extra түрі safety
     // over primitive types such as strings and ints.
     //
-    // Single-case DUs cannot be implicitly converted to or from the type they wrap.
-    // For example, a function which takes in an Address cannot accept a string as that input,
+    // Single-case DUs cannot be implicitly converted to or from the түрі they wrap.
+    // For example, a функция which takes ішінде an Address cannot accept a string as that input,
     // or vice versa.
-    type Address = Address of string
-    type Name = Name of string
-    type SSN = SSN of int
+    түрі Address = Address бастап string
+    түрі Name = Name бастап string
+    түрі SSN = SSN бастап int
 
     // You can easily instantiate a single-case DU as follows.
-    let address = Address "111 Alf Way"
-    let name = Name "Alf"
-    let ssn = SSN 1234567890
+    болсын address = Address "111 Alf Way"
+    болсын name = Name "Alf"
+    болсын ssn = SSN 1234567890
 
-    /// When you need the value, you can unwrap the underlying value with a simple function.
-    let unwrapAddress (Address a) = a
-    let unwrapName (Name n) = n
-    let unwrapSSN (SSN s) = s
+    /// When you need the value, you can unwrap the underlying value с a simple функция.
+    болсын unwrapAddress (Address a) = a
+    болсын unwrapName (Name n) = n
+    болсын unwrapSSN (SSN s) = s
 
-    // Printing single-case DUs is simple with unwrapping functions.
+    // Printing single-case DUs is simple с unwrapping functions.
     printfn "Address: %s, Name: %s, and SSN: %d" (address |> unwrapAddress) (name |> unwrapName) (ssn |> unwrapSSN)
 
 
     /// Discriminated Unions also support recursive definitions.
     ///
-    /// This represents a Binary Search Tree, with one case being the Empty tree,
-    /// and the other being a Node with a value and two subtrees.
-    type BST<'T> =
+    /// This represents a Binary Search Tree, с one case being the Empty tree,
+    /// and the other being a Node с a value and two subtrees.
+    түрі BST<'T> =
         | Empty
-        | Node of value:'T * left: BST<'T> * right: BST<'T>
+        | Node бастап value:'T * left: BST<'T> * right: BST<'T>
 
-    /// Check if an item exists in the binary search tree.
-    /// Searches recursively using Pattern Matching.  Returns true if it exists; otherwise, false.
-    let rec exists item bst =
-        match bst with
+    /// Check егер an item exists ішінде the binary search tree.
+    /// Searches recursively using Pattern Matching.  Returns true егер it exists; otherwise, false.
+    болсын rec exists item bst =
+        сәйкестік bst с
         | Empty -> false
         | Node (x, left, right) ->
-            if item = x then true
-            elif item < x then (exists item left) // Check the left subtree.
-            else (exists item right) // Check the right subtree.
+            егер item = x содан true
+            басегер item < x содан (exists item left) // Check the left subtree.
+            басқа (exists item right) // Check the right subtree.
 
-    /// Inserts an item in the Binary Search Tree.
-    /// Finds the place to insert recursively using Pattern Matching, then inserts a new node.
+    /// Inserts an item ішінде the Binary Search Tree.
+    /// Finds the place to insert recursively using Pattern Matching, содан inserts a жаңа node.
     /// If the item is already present, it does not insert anything.
-    let rec insert item bst =
-        match bst with
+    болсын rec insert item bst =
+        сәйкестік bst с
         | Empty -> Node(item, Empty, Empty)
         | Node(x, left, right) as node ->
-            if item = x then node // No need to insert, it already exists; return the node.
-            elif item < x then Node(x, insert item left, right) // Call into left subtree.
-            else Node(x, left, insert item right) // Call into right subtree.
+            егер item = x содан node // No need to insert, it already exists; return the node.
+            басегер item < x содан Node(x, insert item left, right) // Call into left subtree.
+            басқа Node(x, left, insert item right) // Call into right subtree.
 
 
-module PatternMatching =
-    open System
+модуль PatternMatching =
+    ашық System
 
-    /// A record for a person's first and last name
-    type Person = {
+    /// A record үшін a person's first and last name
+    түрі Person = {
         First : string
         Last  : string
     }
 
-    /// A Discriminated Union of 3 different kinds of employees
-    type Employee =
-        | Engineer of engineer: Person
-        | Manager of manager: Person * reports: List<Employee>
-        | Executive of executive: Person * reports: List<Employee> * assistant: Employee
+    /// A Discriminated Union бастап 3 different kinds бастап employees
+    түрі Employee =
+        | Engineer бастап engineer: Person
+        | Manager бастап manager: Person * reports: List<Employee>
+        | Executive бастап executive: Person * reports: List<Employee> * assistant: Employee
 
-    /// Count everyone underneath the employee in the management hierarchy,
+    /// Count everyone underneath the employee ішінде the management hierarchy,
     /// including the employee. The matches bind names to the properties
-    /// of the cases so that those names can be used inside the match branches.
-    /// Note that the names used for binding do not need to be the same as the
-    /// names given in the DU definition above.
-    let rec countReports(emp : Employee) =
-        1 + match emp with
+    /// бастап the cases so that those names can be used inside the сәйкестік branches.
+    /// Note that the names used үшін binding жасау not need to be the same as the
+    /// names given ішінде the DU definition above.
+    болсын rec countReports(emp : Employee) =
+        1 + сәйкестік emp с
             | Engineer(person) ->
                 0
             | Manager(person, reports) ->
@@ -147,54 +147,54 @@ module PatternMatching =
                 (reports |> List.sumBy countReports) + countReports assistant
 
 
-    /// Find all managers/executives named "Dave" who do not have any reports.
-    /// This uses the 'function' shorthand to as a lambda expression.
-    let rec findDaveWithOpenPosition(emps : List<Employee>) =
+    /// Find all managers/executives named "Dave" who жасау not have any reports.
+    /// This uses the 'функция' shorthand to as a lambda expression.
+    болсын rec findDaveWithOpenPosition(emps : List<Employee>) =
         emps
-        |> List.filter(function
+        |> List.filter(функция
                        | Manager({First = "Dave"}, []) -> true // [] matches an empty list.
                        | Executive({First = "Dave"}, [], _) -> true
                        | _ -> false) // '_' is a wildcard pattern that matches anything.
-                                     // This handles the "or else" case.
+                                     // This handles the "or басқа" case.
 
 
-    /// You can also use the shorthand function construct for pattern matching,
-    /// which is useful when you're writing functions which make use of Partial Application.
-    let private parseHelper f = f >> function
+    /// You can also use the shorthand функция construct үшін pattern matching,
+    /// which is useful when you're writing functions which make use бастап Partial Application.
+    болсын жеке parseHelper f = f >> функция
         | (true, item) -> Some item
         | (false, _) -> None
 
-    let parseDateTimeOffset: string -> _ = parseHelper DateTimeOffset.TryParse
+    болсын parseDateTimeOffset: string -> _ = parseHelper DateTimeOffset.TryParse
 
-    let result = parseDateTimeOffset "1970-01-01"
-    match result with
+    болсын result = parseDateTimeOffset "1970-01-01"
+    сәйкестік result с
     | Some dto -> printfn "It parsed!"
     | None -> printfn "It didn't parse!"
 
-    // Define some more functions which parse with the helper function.
-    let parseInt: string -> _  = parseHelper Int32.TryParse
-    let parseDouble: string -> _  = parseHelper Double.TryParse
-    let parseTimeSpan: string -> _  = parseHelper TimeSpan.TryParse
+    // Define some more functions which parse с the helper функция.
+    болсын parseInt: string -> _  = parseHelper Int32.TryParse
+    болсын parseDouble: string -> _  = parseHelper Double.TryParse
+    болсын parseTimeSpan: string -> _  = parseHelper TimeSpan.TryParse
 
 
-    // Active Patterns are another powerful construct to use with pattern matching.
-    // They allow you to partition input data into custom forms, decomposing them at the pattern match call site.
+    // Active Patterns are another powerful construct to use с pattern matching.
+    // They allow you to partition input data into custom forms, decomposing them at the pattern сәйкестік call site.
     //
     // To learn more, see: https://docs.microsoft.com/dotnet/fsharp/language-reference/active-patterns
-    let (|Int|_|) = parseInt
-    let (|Double|_|) = parseDouble
-    let (|Date|_|) = parseDateTimeOffset
-    let (|TimeSpan|_|) = parseTimeSpan
+    болсын (|Int|_|) = parseInt
+    болсын (|Double|_|) = parseDouble
+    болсын (|Date|_|) = parseDateTimeOffset
+    болсын (|TimeSpan|_|) = parseTimeSpan
 
-    /// Pattern Matching via 'function' keyword and Active Patterns often looks like this.
-    let printParseResult = function
+    /// Pattern Matching via 'функция' keyword and Active Patterns often looks like this.
+    болсын printParseResult = функция
         | Int x -> printfn "%d" x
         | Double x -> printfn "%f" x
         | Date d -> printfn "%s" (d.ToString())
         | TimeSpan t -> printfn "%s" (t.ToString())
         | _ -> printfn "Nothing was parse-able!"
 
-    // Call the printer with some different values to parse.
+    // Call the printer с some different values to parse.
     printParseResult "12"
     printParseResult "12.045"
     printParseResult "12/28/2016"
@@ -202,30 +202,29 @@ module PatternMatching =
     printParseResult "banana!"
 
 
-module OptionValues =
-    /// Option values are any kind of value tagged with either 'Some' or 'None'.
-    /// They are used extensively in F# code to represent the cases where many other
+модуль OptionValues =
+    /// Option values are any kind бастап value tagged с either 'Some' or 'None'.
+    /// They are used extensively ішінде F# code to represent the cases where many other
     /// languages would use null references.
     ///
     /// To learn more, see: https://docs.microsoft.com/dotnet/fsharp/language-reference/options
 
     /// First, define a zip code defined via Single-case Discriminated Union.
-    type ZipCode = ZipCode of string
+    түрі ZipCode = ZipCode бастап string
 
-    /// Next, define a type where the ZipCode is optional.
-    type Customer = { ZipCode: ZipCode option }
+    /// Next, define a түрі where the ZipCode is optional.
+    түрі Customer = { ZipCode: ZipCode option }
 
-    /// Next, define an interface type the represents an object to compute the shipping zone for the customer's zip code,
-    /// given implementations for the 'getState' and 'getShippingZone' abstract methods.
-    type IShippingCalculator =
+    /// Next, define an interface түрі the represents an object to compute the shipping zone үшін the customer's zip code,
+    /// given implementations үшін the 'getState' and 'getShippingZone' abstract methods.
+    түрі IShippingCalculator =
         abstract GetState : ZipCode -> string option
         abstract GetShippingZone : string -> int
 
-    /// Next, calculate a shipping zone for a customer using a calculator instance.
-    /// This uses combinators in the Option module to allow a functional pipeline for
-    /// transforming data with Optionals.
-    let CustomerShippingZone (calculator: IShippingCalculator, customer: Customer) =
+    /// Next, calculate a shipping zone үшін a customer using a calculator instance.
+    /// This uses combinators ішінде the Option модуль to allow a functional pipeline үшін
+    /// transforming data с Optionals.
+    болсын CustomerShippingZone (calculator: IShippingCalculator, customer: Customer) =
         customer.ZipCode
         |> Option.bind calculator.GetState
         |> Option.map calculator.GetShippingZone
-

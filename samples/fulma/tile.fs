@@ -1,11 +1,11 @@
 // More info about Fulma at https://mangelmaxime.github.io/Fulma/
-module Fulma.Tile
+модуль Fulma.Tile
 
-open Fable.React
-open Fable.React.Props
-open Fulma
+ашық Fable.React
+ашық Fable.React.Props
+ашық Fulma
 
-let iconInteractive () =
+болсын iconInteractive () =
     Tile.ancestor [ ]
         [ Tile.parent [ Tile.IsVertical
                         Tile.Size Tile.Is4 ]
@@ -36,7 +36,7 @@ let iconInteractive () =
                         [ str "Suspendisse vel turpis nisi. Fusce at risus accumsan, varius massa id, dictum est. Aenean consequat neque \
                                 sed tincidunt eleifend." ]
                       p [ ]
-                        [ str "Phasellus ac lectus in ex condimentum sollicitudin. Sed id mollis turpis. Sed at \
+                        [ str "Phasellus ac lectus ішінде ex condimentum sollicitudin. Sed id mollis turpis. Sed at \
                                 felis vel diam interdum viverra." ] ] ] ] ]
 
 div [] [

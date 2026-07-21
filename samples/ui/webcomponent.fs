@@ -1,28 +1,28 @@
-module WebComponent
+модуль WebComponent
 
-// Web Components with Fable by Onur Gümüş (Twitter @OnurGumusDev)
-// Check the custom tag in the HTML tab and read this thread for more info:
+// Web Components с Fable by Onur Gümüş (Twitter @OnurGumusDev)
+// Check the custom tag ішінде the HTML tab and read this thread үшін more info:
 // https://twitter.com/OnurGumusDev/status/1329019698667790337
 
 // For a more high-level library to create Web Components, try Fable.Lit:
 // https://fable.io/Fable.Lit/docs/web-components.html
 
-open Fable.Core
-open Browser
-open Browser.Types
-open Fable.Core.JsInterop
+ашық Fable.Core
+ашық Browser
+ашық Browser.Types
+ашық Fable.Core.JsInterop
 
 [<AllowNullLiteral>]
-type HTMLTemplateElement =
+түрі HTMLTemplateElement =
     inherit HTMLElement
-    abstract content: DocumentFragment with get, set
+    abstract content: DocumentFragment с get, set
 
 [<AllowNullLiteral>]
-type HTMLTemplateElementType =
+түрі HTMLTemplateElementType =
     [<EmitConstructor>]
     abstract Create: unit -> HTMLTemplateElement
 
-let template: HTMLTemplateElement =
+болсын template: HTMLTemplateElement =
     downcast document.createElement ("template")
 
 template.innerHTML <-
@@ -58,47 +58,47 @@ template.innerHTML <-
 """
 
 [<Global>]
-module customElements =
-    let define (elementName: string, ty: obj) = jsNative
+модуль customElements =
+    болсын define (elementName: string, ty: obj) = jsNative
 
 [<Global>]
-type ShadowRoot() =
-    member this.appendChild(el: Browser.Types.Node) = jsNative
-    member this.querySelector(selector: string): Browser.Types.HTMLElement = jsNative
+түрі ShadowRoot() =
+    мүшесі this.appendChild(el: Browser.Types.Node) = jsNative
+    мүшесі this.querySelector(selector: string): Browser.Types.HTMLElement = jsNative
 
-let inline attachStatic<'T> (name: string) (f: obj): unit = jsConstructor<'T>?name <- f
+болсын кіріктірілген attachStatic<'T> (name: string) (f: obj): unit = jsConstructor<'T>?name <- f
 
-let inline attachStaticGetter<'T, 'V> (name: string) (f: unit -> 'V): unit =
+болсын кіріктірілген attachStaticGetter<'T, 'V> (name: string) (f: unit -> 'V): unit =
     JS.Constructors.Object.defineProperty (jsConstructor<'T>, name, !!{| get = f |})
     |> ignore
 
 [<Global; AbstractClass>]
 [<AllowNullLiteral>]
-type HTMLElement() =
-    member _.getAttribute(attr: string): string = jsNative
-    member _.attachShadow(obj): ShadowRoot = jsNative
+түрі HTMLElement() =
+    мүшесі _.getAttribute(attr: string): string = jsNative
+    мүшесі _.attachShadow(obj): ShadowRoot = jsNative
     abstract connectedCallback: unit -> unit
     abstract attributeChangedCallback: string * obj * obj -> unit
 
 [<AllowNullLiteral>]
-type Button() =
+түрі Button() =
     inherit HTMLElement()
 
-    let shadowRoot: ShadowRoot = base.attachShadow ({| mode = "open" |})
+    болсын shadowRoot: ShadowRoot = base.attachShadow ({| mode = "ашық" |})
 
-    do
-        let clone = template.content.cloneNode (true)
+    жасау
+        болсын clone = template.content.cloneNode (true)
         shadowRoot.appendChild (clone)
 
-    let button = shadowRoot.querySelector ("button")
+    болсын button = shadowRoot.querySelector ("button")
 
-    member this.render() =
+    мүшесі this.render() =
         button.innerHTML <- this.getAttribute ("label")
 
     override _.connectedCallback() = printf "connected callback"
 
     override this.attributeChangedCallback(name, oldVal, newVal) = this.render ()
 
-attachStaticGetter<Button, _> "observedAttributes" (fun () -> [| "label" |])
+attachStaticGetter<Button, _> "observedAttributes" (функ () -> [| "label" |])
 
 customElements.define ("my-button", jsConstructor<Button>)

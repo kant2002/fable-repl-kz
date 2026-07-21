@@ -1,24 +1,24 @@
 // More info about Fulma at https://mangelmaxime.github.io/Fulma/
-module Fulma.Notification
+модуль Fulma.Notification
 
-open Fable.Core
-open Fable.Core.JsInterop
-open Fable.React
-open Fable.React.Props
-open Fulma
+ашық Fable.Core
+ашық Fable.Core.JsInterop
+ашық Fable.React
+ашық Fable.React.Props
+ашық Fulma
 
-let basic () =
+болсын basic () =
     Notification.notification [ ]
         [ str "I am a notification" ]
 
-let color () =
+болсын color () =
     Notification.notification [ Notification.Color IsSuccess ]
-        [ str "I am a notification with some colors" ]
+        [ str "I am a notification с some colors" ]
 
-let withCross () =
+болсын withCross () =
     Notification.notification [ Notification.Color IsDanger ]
         [ Notification.delete [ ] [ ]
-          str "I am a notification with some colors and a delete button" ]
+          str "I am a notification с some colors and a delete button" ]
 
 div [] [
     Card.card [] [Card.content [] [basic()] ]

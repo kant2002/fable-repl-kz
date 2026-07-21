@@ -1,10 +1,10 @@
 // More info about Fulma at https://mangelmaxime.github.io/Fulma/
-module Fulma.Columns
+модуль Fulma.Columns
 
-open Fable.React
-open Fulma
+ашық Fable.React
+ашық Fulma
 
-let basic () =
+болсын basic () =
     Columns.columns [ ]
         [ Column.column [ Column.Width (Screen.All, Column.Is6) ]
             [ Columns.columns [ ]

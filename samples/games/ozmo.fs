@@ -1,65 +1,65 @@
-module Ozmo
+модуль Ozmo
 
 // Phil Trelford's classic Ozmo game ported to Fable!
 // Shows how to handle keyboard events and use HTML5 canvas.
 // You can also get it (as a JavaScript app) from the Windows Store.
 
-open Fable.Core
-open Fable.Core.JsInterop
-open Browser.Types
-open Browser
+ашық Fable.Core
+ашық Fable.Core.JsInterop
+ашық Browser.Types
+ашық Browser
 
-module Keyboard =
+модуль Keyboard =
 
-    let mutable keysPressed = Set.empty
+    болсын mutable keysPressed = Set.empty
 
-    let code x = if keysPressed.Contains(x) then 1 else 0
+    болсын code x = егер keysPressed.Contains(x) содан 1 басқа 0
 
-    let arrows () =
+    болсын arrows () =
         (code "ArrowRight" - code "ArrowLeft", code "ArrowUp" - code "ArrowDown")
 
-    let update (e : KeyboardEvent, pressed) =
-        let key = e.key
-        let op = if pressed then Set.add else Set.remove
+    болсын update (e : KeyboardEvent, pressed) =
+        болсын key = e.key
+        болсын op = егер pressed содан Set.add басқа Set.remove
         keysPressed <- op key keysPressed
 
-    let init () =
-        window.addEventListener("keydown", fun e -> update(e :?> _, true))
-        window.addEventListener("keyup", fun e -> update(e :?> _, false))
+    болсын init () =
+        window.addEventListener("keydown", функ e -> update(e :?> _, true))
+        window.addEventListener("keyup", функ e -> update(e :?> _, false))
 
 // Main
 
-/// Scale to make it fit in a 1920*1080 screen
-let scale = 0.8
+/// Scale to make it fit ішінде a 1920*1080 screen
+болсын scale = 0.8
 
-/// The width of the canvas
-let width = 900. * scale
-/// The height of the canvas
-let height = 668. * scale
-/// Height of the floor - the bottom black part
-let floorHeight = 100. * scale
-/// Height of the atmosphere - the yellow gradient
-let atmosHeight = 300. * scale
+/// The width бастап the canvas
+болсын width = 900. * scale
+/// The height бастап the canvas
+болсын height = 668. * scale
+/// Height бастап the floor - the bottom black part
+болсын floorHeight = 100. * scale
+/// Height бастап the atmosphere - the yellow gradient
+болсын atmosHeight = 300. * scale
 
 Keyboard.init()
 
-let canvas = document.getElementsByTagName("canvas").[0] :?> HTMLCanvasElement
-let ctx = canvas.getContext_2d()
+болсын canvas = document.getElementsByTagName("canvas").[0] :?> HTMLCanvasElement
+болсын ctx = canvas.getContext_2d()
 canvas.width <- width
 canvas.height <- height
 
 /// Draw gradient between two Y offsets and two colours
-let drawGrd (ctx:CanvasRenderingContext2D)
+болсын drawGrd (ctx:CanvasRenderingContext2D)
     (canvas:HTMLCanvasElement) (y0,y1) (c0,c1) =
-    let grd = ctx.createLinearGradient(0.,y0,0.,y1)
+    болсын grd = ctx.createLinearGradient(0.,y0,0.,y1)
     grd.addColorStop(0.,c0)
     grd.addColorStop(1.,c1)
     ctx.fillStyle <- !^ grd
     ctx.fillRect(0.,y0, canvas.width, y1- y0)
 
 
-/// Draw background of the Ozmo game
-let drawBg ctx canvas =
+/// Draw background бастап the Ozmo game
+болсын drawBg ctx canvas =
     drawGrd ctx canvas
         (0.,atmosHeight) ("yellow","orange")
     drawGrd ctx canvas
@@ -71,18 +71,18 @@ let drawBg ctx canvas =
           canvas.width,floorHeight )
 
 /// Draw the specified text (when game finishes)
-let drawText(text,x,y) =
+болсын drawText(text,x,y) =
     ctx.fillStyle <- !^ "white"
     ctx.font <- "bold 40pt";
     ctx.fillText(text, x, y)
 
 
-type Blob =
+түрі Blob =
     { X:float; Y:float;
       vx:float; vy:float;
       Radius:float; color:string }
 
-let drawBlob (ctx:CanvasRenderingContext2D)
+болсын drawBlob (ctx:CanvasRenderingContext2D)
     (canvas:HTMLCanvasElement) (blob:Blob) =
     ctx.beginPath()
     ctx.arc
@@ -96,88 +96,88 @@ let drawBlob (ctx:CanvasRenderingContext2D)
 
 
 /// Apply key effects on Player's blob - changes X speed
-let direct (dx,dy) (blob:Blob) =
-    { blob with vx = blob.vx + (float dx)/4.0 }
+болсын direct (dx,dy) (blob:Blob) =
+    { blob с vx = blob.vx + (float dx)/4.0 }
 
 /// Apply gravity on falling blobs - gets faster every step
-let gravity (blob:Blob) =
-    if blob.Y > 0. then { blob with vy = blob.vy - 0.1 }
-    else blob
+болсын gravity (blob:Blob) =
+    егер blob.Y > 0. содан { blob с vy = blob.vy - 0.1 }
+    басқа blob
 
-/// Bounde Player's blob off the wall if it hits it
-let bounce (blob:Blob) =
-    let n = width
-    if blob.X < 0. then
-        { blob with X = -blob.X; vx = -blob.vx }
-    elif (blob.X > n) then
-        { blob with X = n - (blob.X - n); vx = -blob.vx }
-    else blob
+/// Bounde Player's blob off the wall егер it hits it
+болсын bounce (blob:Blob) =
+    болсын n = width
+    егер blob.X < 0. содан
+        { blob с X = -blob.X; vx = -blob.vx }
+    басегер (blob.X > n) содан
+        { blob с X = n - (blob.X - n); vx = -blob.vx }
+    басқа blob
 
 
 /// Move blob by one step - adds X and Y
 /// velocities to the X and Y coordinates
-let move (blob:Blob) =
-    { blob with
+болсын move (blob:Blob) =
+    { blob с
         X = blob.X + blob.vx
         Y = max 0.0 (blob.Y + blob.vy) }
 
 /// Apply step on Player's blob. Composes above functions.
-let step dir blob =
+болсын step dir blob =
     blob |> direct dir |> move |> bounce
 
 /// Check whether two blobs collide
-let collide (a:Blob) (b:Blob) =
-    let dx = (a.X - b.X)*(a.X - b.X)
-    let dy = (a.Y - b.Y)*(a.Y - b.Y)
-    let dist = sqrt(dx + dy)
+болсын collide (a:Blob) (b:Blob) =
+    болсын dx = (a.X - b.X)*(a.X - b.X)
+    болсын dy = (a.Y - b.Y)*(a.Y - b.Y)
+    болсын dist = sqrt(dx + dy)
     dist < abs(a.Radius - b.Radius)
 
 /// Remove all falling blobs that hit Player's blob
-let absorb (blob:Blob) (drops:Blob list) =
+болсын absorb (blob:Blob) (drops:Blob list) =
     drops
-    |> List.filter (fun drop ->
+    |> List.filter (функ drop ->
         collide blob drop |> not )
 
 
 // Game helpers
 // =============
 
-let grow = "black"
-let shrink = "white"
+болсын grow = "black"
+болсын shrink = "white"
 
-let newDrop color =
+болсын newDrop color =
     { X = JS.Math.random()*width*0.8 + (width*0.1)
       Y=600.; Radius=10.; vx=0.; vy = 0.0
       color=color }
 
-let newGrow () = newDrop grow
-let newShrink () = newDrop shrink
+болсын newGrow () = newDrop grow
+болсын newShrink () = newDrop shrink
 
-/// Update drops and countdown in each step
-let updateDrops drops countdown =
-    if countdown > 0 then
+/// Update drops and countdown ішінде each step
+болсын updateDrops drops countdown =
+    егер countdown > 0 содан
         drops, countdown - 1
-    elif floor(JS.Math.random()*8.) = 0. then
-        let drop =
-            if floor(JS.Math.random()*3.) = 0. then newGrow()
-            else newShrink()
+    басегер floor(JS.Math.random()*8.) = 0. содан
+        болсын drop =
+            егер floor(JS.Math.random()*3.) = 0. содан newGrow()
+            басқа newShrink()
         drop::drops, 8
-    else drops, countdown
+    басқа drops, countdown
 
 
-/// Count growing and shrinking drops in the list
-let countDrops drops =
-    let count color =
+/// Count growing and shrinking drops ішінде the list
+болсын countDrops drops =
+    болсын count color =
         drops
-        |> List.filter (fun drop -> drop.color = color)
+        |> List.filter (функ drop -> drop.color = color)
         |> List.length
     count grow, count shrink
 
 // Asynchronous game loop
 // ========================
 
-let rec game () = async {
-    let blob =
+болсын rec game () = async {
+    болсын blob =
         { X = 300.; Y=0.; Radius=50.;
           vx=0.; vy=0.; color="black" }
     return! update blob [newGrow ()] 0 }
@@ -187,40 +187,40 @@ and completed () = async {
     do! Async.Sleep 10000
     return! game () }
 
-/// Keeps current state for Player's blob, falling
+/// Keeps current state үшін Player's blob, falling
 /// drops and the countdown since last drop was generated
 and update blob drops countdown = async {
     // Update the drops & countdown
-    let drops, countdown = updateDrops drops countdown
+    болсын drops, countdown = updateDrops drops countdown
 
     // Count drops, apply physics and count them again
-    let beforeGrow, beforeShrink = countDrops drops
-    let drops =
+    болсын beforeGrow, beforeShrink = countDrops drops
+    болсын drops =
         drops
         |> List.map (gravity >> move)
         |> absorb blob
-    let afterGrow, afterShrink = countDrops drops
-    let drops = drops |> List.filter (fun blob -> blob.Y > 0.)
+    болсын afterGrow, afterShrink = countDrops drops
+    болсын drops = drops |> List.filter (функ blob -> blob.Y > 0.)
 
-    // Calculate new player's size based on absorbed drops
-    let radius = blob.Radius + float (beforeGrow - afterGrow) *4.
-    let radius = radius - float (beforeShrink - afterShrink) * 4.
-    let radius = max 5.0 radius
+    // Calculate жаңа player's size based on absorbed drops
+    болсын radius = blob.Radius + float (beforeGrow - afterGrow) *4.
+    болсын radius = radius - float (beforeShrink - afterShrink) * 4.
+    болсын radius = max 5.0 radius
 
     // Update radius and apply keyboard events
-    let blob = { blob with Radius = radius }
-    let blob = blob |> step (Keyboard.arrows())
+    болсын blob = { blob с Radius = radius }
+    болсын blob = blob |> step (Keyboard.arrows())
 
-    // Render the new game state
+    // Render the жаңа game state
     drawBg ctx canvas
-    for drop in drops do drawBlob ctx canvas drop
+    үшін drop ішінде drops жасау drawBlob ctx canvas drop
     drawBlob ctx canvas blob
 
     // If the game completed, switch state
     // otherwise sleep and update recursively!
-    if blob.Radius > 150. then
+    егер blob.Radius > 150. содан
         return! completed()
-    else
+    басқа
         do! Async.Sleep(int (1000. / 60.))
         return! update blob drops countdown }
 

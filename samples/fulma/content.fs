@@ -1,10 +1,10 @@
 // More info about Fulma at https://mangelmaxime.github.io/Fulma/
-module Fulma.Content
+модуль Fulma.Content
 
-open Fable.React
-open Fulma
+ашық Fable.React
+ашық Fulma
 
-let contentInteractive () =
+болсын contentInteractive () =
     Content.content [ ]
         [ h1 [ ] [str "Hello World"]
           p [ ]
@@ -22,14 +22,14 @@ let contentInteractive () =
                   Donec at dignissim dui. Ut et neque nisl." ]
           ul [ ]
              [ li [ ] [str "In fermentum leo eu lectus mollis, quis dictum mi aliquet." ]
-               li [ ] [str "Morbi eu nulla lobortis, lobortis est in, fringilla felis." ]
-               li [ ] [str "Aliquam nec felis in sapien venenatis viverra fermentum nec lectus." ]
+               li [ ] [str "Morbi eu nulla lobortis, lobortis est ішінде, fringilla felis." ]
+               li [ ] [str "Aliquam nec felis ішінде sapien venenatis viverra fermentum nec lectus." ]
                li [ ] [str "Ut non enim metus."] ]
           p [ ] [str "Sed sagittis enim ac tortor maximus rutrum.
-                     Nulla facilisi. Donec mattis vulputate risus in luctus.
+                     Nulla facilisi. Donec mattis vulputate risus ішінде luctus.
                      Maecenas vestibulum interdum commodo." ] ]
 
-let sizeInteractive () =
+болсын sizeInteractive () =
     Content.content [ Content.Size IsSmall ]
         [ h1 [ ] [str "Hello World"]
           p [ ]
@@ -47,11 +47,11 @@ let sizeInteractive () =
                   Donec at dignissim dui. Ut et neque nisl." ]
           ul [ ]
              [ li [ ] [str "In fermentum leo eu lectus mollis, quis dictum mi aliquet." ]
-               li [ ] [str "Morbi eu nulla lobortis, lobortis est in, fringilla felis." ]
-               li [ ] [str "Aliquam nec felis in sapien venenatis viverra fermentum nec lectus." ]
+               li [ ] [str "Morbi eu nulla lobortis, lobortis est ішінде, fringilla felis." ]
+               li [ ] [str "Aliquam nec felis ішінде sapien venenatis viverra fermentum nec lectus." ]
                li [ ] [str "Ut non enim metus."] ]
           p [ ] [str "Sed sagittis enim ac tortor maximus rutrum.
-                     Nulla facilisi. Donec mattis vulputate risus in luctus.
+                     Nulla facilisi. Donec mattis vulputate risus ішінде luctus.
                      Maecenas vestibulum interdum commodo." ] ]
 
 div [] [

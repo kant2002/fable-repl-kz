@@ -1,11 +1,11 @@
 // More info about Fulma at https://mangelmaxime.github.io/Fulma/
-module Fulma.Table
+модуль Fulma.Table
 
-open Fable.React
-open Fable.React.Props
-open Fulma
+ашық Fable.React
+ашық Fable.React.Props
+ашық Fulma
 
-let simpleInteractive () =
+болсын simpleInteractive () =
     Table.table [ Table.IsHoverable ]
         [ thead [ ]
             [ tr [ ]
@@ -26,7 +26,7 @@ let simpleInteractive () =
                    td [ ] [ str "Doe" ]
                    td [ ] [ str "11/07/1978" ] ] ] ]
 
-let modifierInteractive () =
+болсын modifierInteractive () =
     Table.table [ Table.IsBordered
                   Table.IsNarrow
                   Table.IsStriped ]
@@ -49,7 +49,7 @@ let modifierInteractive () =
                    td [ ] [ str "Doe" ]
                    td [ ] [ str "11/07/1978" ] ] ] ]
 
-let modifierFullWitdth () =
+болсын modifierFullWitdth () =
     Table.table [ Table.IsBordered
                   Table.IsFullWidth
                   Table.IsStriped ]

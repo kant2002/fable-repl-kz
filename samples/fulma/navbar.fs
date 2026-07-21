@@ -1,11 +1,11 @@
 // More info about Fulma at https://mangelmaxime.github.io/Fulma/
-module Fulma.Navbar
+модуль Fulma.Navbar
 
-open Fable.React
-open Fable.React.Props
-open Fulma
+ашық Fable.React
+ашық Fable.React.Props
+ашық Fulma
 
-let basic () =
+болсын basic () =
     Navbar.navbar [ ]
         [ Navbar.Brand.div [ ]
             [ Navbar.Item.a [ Navbar.Item.Props [ Href "#" ] ]
@@ -28,7 +28,7 @@ let basic () =
                 [ Button.button [ Button.Color IsSuccess ]
                     [ str "Demo" ] ] ] ]
 
-let colors () =
+болсын colors () =
     Navbar.navbar [ Navbar.Color IsInfo ]
         [ Navbar.Brand.div [ ]
             [ Navbar.Item.a [ Navbar.Item.Props [ Href "#" ] ]

@@ -1,11 +1,11 @@
 // More info about Fulma at https://mangelmaxime.github.io/Fulma/
-module Fulma.Button
+модуль Fulma.Button
 
-open Fable.React
-open Fable.React.Props
-open Fulma
+ашық Fable.React
+ашық Fable.React.Props
+ашық Fulma
 
-let colorInteractive () =
+болсын colorInteractive () =
     Columns.columns [ ]
         [ Column.column [ ]
             [ div [ Class "block" ]
@@ -23,14 +23,14 @@ let colorInteractive () =
                     Button.button [ Button.Color IsWarning ] [ str "Warning" ]
                     Button.button [ Button.Color IsDanger ] [ str "Danger" ] ] ] ]
 
-let sizeInteractive () =
+болсын sizeInteractive () =
     div [ Class "block" ]
         [ Button.button [ Button.Size IsSmall ] [ str "Small" ]
           Button.button [ ] [ str "Normal" ]
           Button.button [ Button.Size IsMedium ] [ str "Medium" ]
           Button.button [ Button.Size IsLarge ] [ str "Large" ] ]
 
-let outlinedInteractive () =
+болсын outlinedInteractive () =
     div [ Class "block" ]
         [ Button.button [ Button.IsOutlined ] [ str "Outlined" ]
           Button.button [ Button.Color IsSuccess; Button.IsOutlined ] [ str "Outlined" ]
@@ -38,14 +38,14 @@ let outlinedInteractive () =
           Button.button [ Button.Color IsInfo; Button.IsOutlined ] [ str "Outlined" ]
           Button.button [ Button.Color IsDanger; Button.IsOutlined ] [ str "Outlined" ] ]
 
-let mixedStyleInteractive () =
+болсын mixedStyleInteractive () =
     div [ Class "callout is-primary block" ]
         [ Button.button [ Button.IsInverted ] [ str "Inverted" ]
           Button.button [ Button.Color IsSuccess; Button.IsInverted ] [ str "Inverted" ]
           Button.button [ Button.Color IsDanger; Button.IsInverted; Button.IsOutlined ] [ str "Invert Outlined" ]
           Button.button [ Button.Color IsInfo; Button.IsInverted; Button.IsOutlined ] [ str "Invert Outlined" ] ]
 
-let stateInteractive () =
+болсын stateInteractive () =
     div [ Class "block" ]
         [ Button.button [ ] [ str "Normal" ]
           Button.button [ Button.Color IsSuccess; Button.IsHovered true ] [ str "Hover" ]
@@ -53,11 +53,11 @@ let stateInteractive () =
           Button.button [ Button.Color IsInfo; Button.IsActive true ] [ str "Active" ]
           Button.button [ Button.Color IsBlack; Button.IsLoading true ] [ str "Loading" ] ]
 
-let staticView () =
+болсын staticView () =
     Button.button [ Button.IsStatic true ]
         [ str "Static" ]
 
-let disabled () =
+болсын disabled () =
     div [ Class "block" ]
         [ Button.button [ Button.Disabled true
                           Button.IsLink ] [ str "Link" ]
@@ -72,7 +72,7 @@ let disabled () =
           Button.button [ Button.Disabled true
                           Button.Color IsDanger ] [ str "Danger" ] ]
 
-let icons () =
+болсын icons () =
     div [ Class "block" ]
         [ Button.button [ ] [ Icon.icon [ ] [ i [ Class "fas fa-bold" ] [] ] ]
           Button.button [ ] [ Icon.icon [ ] [ i [ Class "fas fa-italic" ] [] ] ]
@@ -80,7 +80,7 @@ let icons () =
           Button.button [ Button.Color IsDanger
                           Button.IsOutlined ] [ str "Danger" ] ]
 
-let demoHelpers () =
+болсын demoHelpers () =
     div [ Class "block" ]
         [ Button.a [ ] [ str "Anchor" ]
           Button.span [ ] [ str "Span" ]

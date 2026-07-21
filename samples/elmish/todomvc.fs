@@ -1,55 +1,55 @@
-module Elmish.TodoMVC
+модуль Elmish.TodoMVC
 
 (**
  TodoMVC app ported from Elm.
  You can find more info about Emish architecture and samples at https://elmish.github.io/
- NOTE: The API in Fable's REPL may differ from Fable.Elmish & Fable.React nuget libraries.
+ NOTE: The API ішінде Fable's REPL may differ from Fable.Elmish & Fable.React nuget libraries.
        The generated JS code won't be as optimized as when using dotnet-fable.
 *)
 
-open Fable.Core
-open Fable.React
-open Fable.React.Props
-open Browser.Types
-open Browser
-open Elmish
-open Elmish.React
+ашық Fable.Core
+ашық Fable.React
+ашық Fable.React.Props
+ашық Browser.Types
+ашық Browser
+ашық Elmish
+ашық Elmish.React
 
-let [<Literal>] ESC_KEY = 27.
-let [<Literal>] ENTER_KEY = 13.
+болсын [<Literal>] ESC_KEY = 27.
+болсын [<Literal>] ENTER_KEY = 13.
 
-type WhatIsVisible =
+түрі WhatIsVisible =
    | All
    | Active
    | Completed
 
-let toStr v =
-    match v with
+болсын toStr v =
+    сәйкестік v с
     | All -> "All"
     | Active -> "Active"
     | Completed -> "Completed"
 
 // MODEL
-type Entry =
+түрі Entry =
     { description : string
       completed : bool
       editing : bool
       id : int }
 
-// The full application state of our todo app.
-type Model =
+// The full application state бастап our todo app.
+түрі Model =
     { entries : Entry list
       field : string
       uid : int
       visibility : WhatIsVisible }
 
-let emptyModel () =
+болсын emptyModel () =
     { entries = []
       visibility = All
       field = ""
       uid = 0 }
 
-let newEntry desc id =
+болсын newEntry desc id =
   { description = desc
     completed = false
     editing = false
@@ -57,98 +57,98 @@ let newEntry desc id =
 
 // UPDATE
 
-(** Users of our app can trigger messages by clicking and typing. These
-messages are fed into the `update` function as they occur, letting us react
+(** Users бастап our app can trigger messages by clicking and typing. These
+messages are fed into the `update` функция as they occur, letting us react
 to them.
 *)
-type Msg =
-    | Failure of string
-    | UpdateField of string
-    | EditingEntry of int*bool
-    | UpdateEntry of int*string
+түрі Msg =
+    | Failure бастап string
+    | UpdateField бастап string
+    | EditingEntry бастап int*bool
+    | UpdateEntry бастап int*string
     | Add
-    | Delete of int
+    | Delete бастап int
     | DeleteComplete
-    | Check of int*bool
-    | CheckAll of bool
-    | ChangeVisibility of WhatIsVisible
+    | Check бастап int*bool
+    | CheckAll бастап bool
+    | ChangeVisibility бастап WhatIsVisible
 
 // How we update our Model on a given Msg?
-let update (msg:Msg) (model:Model) =
-    match msg with
+болсын update (msg:Msg) (model:Model) =
+    сәйкестік msg с
     | Failure err ->
         JS.console.error(err)
         model
 
     | Add ->
-        let xs = if System.String.IsNullOrEmpty model.field then
+        болсын xs = егер System.String.IsNullOrEmpty model.field содан
                     model.entries
-                 else
+                 басқа
                     model.entries @ [newEntry model.field model.uid]
-        { model with
+        { model с
             uid = model.uid + 1
             field = ""
             entries = xs }
 
     | UpdateField str ->
-      { model with field = str }
+      { model с field = str }
 
     | EditingEntry (id,isEditing) ->
-        let updateEntry t =
-          if t.id = id then { t with editing = isEditing } else t
-        { model with entries = List.map updateEntry model.entries }
+        болсын updateEntry t =
+          егер t.id = id содан { t с editing = isEditing } басқа t
+        { model с entries = List.map updateEntry model.entries }
 
     | UpdateEntry (id,task) ->
-        let updateEntry t =
-          if t.id = id then { t with description = task } else t
-        { model with entries = List.map updateEntry model.entries }
+        болсын updateEntry t =
+          егер t.id = id содан { t с description = task } басқа t
+        { model с entries = List.map updateEntry model.entries }
 
     | Delete id ->
-        { model with entries = List.filter (fun t -> t.id <> id) model.entries }
+        { model с entries = List.filter (функ t -> t.id <> id) model.entries }
 
     | DeleteComplete ->
-        { model with entries = List.filter (fun t -> not t.completed) model.entries }
+        { model с entries = List.filter (функ t -> not t.completed) model.entries }
 
     | Check (id,isCompleted) ->
-        let updateEntry t =
-          if t.id = id then { t with completed = isCompleted } else t
-        { model with entries = List.map updateEntry model.entries }
+        болсын updateEntry t =
+          егер t.id = id содан { t с completed = isCompleted } басқа t
+        { model с entries = List.map updateEntry model.entries }
 
     | CheckAll isCompleted ->
-        let updateEntry t = { t with completed = isCompleted }
-        { model with entries = List.map updateEntry model.entries }
+        болсын updateEntry t = { t с completed = isCompleted }
+        { model с entries = List.map updateEntry model.entries }
 
     | ChangeVisibility visibility ->
-        { model with visibility = visibility }
+        { model с visibility = visibility }
 
-let onEnter msg dispatch =
-    OnKeyDown (fun ev ->
-        if ev.keyCode = ENTER_KEY then
+болсын onEnter msg dispatch =
+    OnKeyDown (функ ev ->
+        егер ev.keyCode = ENTER_KEY содан
             dispatch msg)
 
-let targetValue (ev: Event) =
+болсын targetValue (ev: Event) =
     (ev.target :?> HTMLInputElement).value
 
-let viewInput (model:string) dispatch =
+болсын viewInput (model:string) dispatch =
     header [ Class "header" ] [
         h1 [] [ str "todos" ]
         input [
-            Class "new-todo"
+            Class "жаңа-todo"
             Placeholder "What needs to be done?"
             Value model
             onEnter Add dispatch
-            OnChange (fun ev ->
+            OnChange (функ ev ->
                 targetValue ev |> UpdateField |> dispatch)
             AutoFocus true
         ]
     ]
 
-let classList classes =
+болсын classList classes =
     classes
-    |> List.fold (fun complete -> function | (name,true) -> complete + " " + name | _ -> complete) ""
+    |> List.fold (функ complete -> функция | (name,true) -> complete + " " + name | _ -> complete) ""
     |> Class
 
-let viewEntry todo dispatch =
+болсын viewEntry todo dispatch =
   li
     [ classList [ ("completed", todo.completed); ("editing", todo.editing) ]]
     [ div
@@ -157,13 +157,13 @@ let viewEntry todo dispatch =
             [ Class "toggle"
               Type "checkbox"
               Checked todo.completed
-              OnChange (fun _ -> Check (todo.id,(not todo.completed)) |> dispatch) ]
+              OnChange (функ _ -> Check (todo.id,(not todo.completed)) |> dispatch) ]
           label
-            [ OnDoubleClick (fun _ -> EditingEntry (todo.id,true) |> dispatch) ]
+            [ OnDoubleClick (функ _ -> EditingEntry (todo.id,true) |> dispatch) ]
             [ str todo.description ]
           button
             [ Class "destroy"
-              OnClick (fun _-> Delete todo.id |> dispatch) ]
+              OnClick (функ _-> Delete todo.id |> dispatch) ]
             []
         ]
       input
@@ -171,23 +171,23 @@ let viewEntry todo dispatch =
           Value todo.description
           Name "title"
           Id ("todo-" + (string todo.id))
-          OnInput (fun ev -> UpdateEntry (todo.id, targetValue ev) |> dispatch)
-          OnBlur (fun _ -> EditingEntry (todo.id,false) |> dispatch)
+          OnInput (функ ev -> UpdateEntry (todo.id, targetValue ev) |> dispatch)
+          OnBlur (функ _ -> EditingEntry (todo.id,false) |> dispatch)
           onEnter (EditingEntry (todo.id,false)) dispatch ]
     ]
 
-let viewEntries visibility entries dispatch =
-    let isVisible todo =
-        match visibility with
+болсын viewEntries visibility entries dispatch =
+    болсын isVisible todo =
+        сәйкестік visibility с
         | Completed -> todo.completed
         | Active -> not todo.completed
         | All -> true
 
-    let allCompleted =
-        List.forall (fun t -> t.completed) entries
+    болсын allCompleted =
+        List.forall (функ t -> t.completed) entries
 
-    let cssVisibility =
-        if List.isEmpty entries then "hidden" else "visible"
+    болсын cssVisibility =
+        егер List.isEmpty entries содан "hidden" басқа "visible"
 
     section
       [ Class "main"
@@ -197,7 +197,7 @@ let viewEntries visibility entries dispatch =
             Type "checkbox"
             Name "toggle"
             Checked allCompleted
-            OnChange (fun _ -> CheckAll (not allCompleted) |> dispatch)]
+            OnChange (функ _ -> CheckAll (not allCompleted) |> dispatch)]
         label
           [ HtmlFor "toggle-all" ]
           [ str "Mark all as complete" ]
@@ -205,17 +205,17 @@ let viewEntries visibility entries dispatch =
           [ Class "todo-list" ]
           (entries
            |> List.filter isVisible
-           |> List.map (fun i -> viewEntry i dispatch)) ]
+           |> List.map (функ i -> viewEntry i dispatch)) ]
 
 // VIEW CONTROLS AND FOOTER
-let visibilitySwap uri visibility actualVisibility dispatch =
+болсын visibilitySwap uri visibility actualVisibility dispatch =
   li
-    [ OnClick (fun _ -> ChangeVisibility visibility |> dispatch) ]
+    [ OnClick (функ _ -> ChangeVisibility visibility |> dispatch) ]
     [ a [ Href uri
           classList ["selected", visibility = actualVisibility] ]
           [ str (toStr visibility) ] ]
 
-let viewControlsFilters visibility dispatch =
+болсын viewControlsFilters visibility dispatch =
   ul
     [ Class "filters" ]
     [ visibilitySwap "#/" All visibility dispatch
@@ -224,29 +224,29 @@ let viewControlsFilters visibility dispatch =
       str " "
       visibilitySwap "#/completed" Completed visibility dispatch ]
 
-let viewControlsCount entriesLeft =
-  let item =
-      if entriesLeft = 1 then " item" else " items"
+болсын viewControlsCount entriesLeft =
+  болсын item =
+      егер entriesLeft = 1 содан " item" басқа " items"
 
   span
       [ Class "todo-count" ]
       [ strong [] [ str (string entriesLeft) ]
         str (item + " left") ]
 
-let viewControlsClear entriesCompleted dispatch =
+болсын viewControlsClear entriesCompleted dispatch =
   button
     [ Class "clear-completed"
       Hidden (entriesCompleted = 0)
-      OnClick (fun _ -> DeleteComplete |> dispatch)]
+      OnClick (функ _ -> DeleteComplete |> dispatch)]
     [ str ("Clear completed (" + (string entriesCompleted) + ")") ]
 
-let viewControls visibility entries dispatch =
-  let entriesCompleted =
+болсын viewControls visibility entries dispatch =
+  болсын entriesCompleted =
       entries
-      |> List.filter (fun t -> t.completed)
+      |> List.filter (функ t -> t.completed)
       |> List.length
 
-  let entriesLeft =
+  болсын entriesLeft =
       List.length entries - entriesCompleted
 
   footer
@@ -256,7 +256,7 @@ let viewControls visibility entries dispatch =
         viewControlsFilters visibility dispatch
         viewControlsClear entriesCompleted dispatch ]
 
-let infoFooter =
+болсын infoFooter =
   footer [ Class "info" ]
     [ p []
         [ str "Double-click to edit a todo" ]
@@ -264,11 +264,11 @@ let infoFooter =
         [ str "Ported from Elm by "
           a [ Href "https://github.com/et1975" ] [ str "Eugene Tolmachev" ]]
       p []
-        [ str "Part of "
+        [ str "Part бастап "
           a [ Href "http://todomvc.com" ] [ str "TodoMVC" ]]
     ]
 
-let view model dispatch =
+болсын view model dispatch =
   div
     [ Class "todomvc-wrapper"]
     [ section

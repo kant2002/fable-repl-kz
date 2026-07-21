@@ -1,10 +1,10 @@
 // More info about Fulma at https://mangelmaxime.github.io/Fulma/
-module Fulma.Level
+модуль Fulma.Level
 
-open Fable.React
-open Fulma
+ашық Fable.React
+ашық Fulma
 
-let iconInteractive () =
+болсын iconInteractive () =
     Level.level [ ]
         [ Level.left [ ]
             [ Level.item [ ]
@@ -30,7 +30,7 @@ let iconInteractive () =
               Level.item [ ]
                 [ Button.button [ Button.Color IsSuccess ] [ str "New" ] ] ] ]
 
-let centered () =
+болсын centered () =
     Level.level [ ]
         [ Level.item [ Level.Item.HasTextCentered ]
             [ div [ ]
